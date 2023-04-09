@@ -5,7 +5,7 @@ import torchvision
 import os
 import scrollArea
 from PIL import Image
-from PyQt5.QtWidgets import QPushButton, QFileDialog, QMainWindow, QApplication, QAction, QWidget, QTabWidget, QVBoxLayout
+from PyQt5.QtWidgets import QPushButton, QWidget, QTabWidget, QMainWindow, QAction, QFileDialog, QVBoxLayout, QApplication
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -26,6 +26,7 @@ class MainWindow(QMainWindow):
         tabs.addTab(testTab, "Testing Set")
         vbox = QVBoxLayout()
         vbox.addWidget(tabs)
+        
         
     def buttonClick(self):
         nameFile= QFileDialog.getOpenFileName(self,"Open training dataset",r"<Default dir>", "CSV (*.csv);;All Files (*)")

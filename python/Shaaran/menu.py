@@ -1,4 +1,3 @@
-
 import customtkinter
 import trainingWindow
 import testWindow
@@ -99,10 +98,6 @@ class App(customtkinter.CTk):
     def change_scaling_event(self, new_scaling: str):
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         customtkinter.set_widget_scaling(new_scaling_float)
-
-    def sidebar_button_event(self):
-        print("Attempting to load: ", self.sidebar_button_event)
-
 
 
 if __name__ == "__main__":

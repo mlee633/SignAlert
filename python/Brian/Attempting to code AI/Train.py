@@ -1,6 +1,5 @@
 from VGG import VGG16, device, nn, torch, train_loader,valid_loader, np
 
-
 num_classes = 26
 num_epochs = 20
 batch_size = 16
@@ -28,7 +27,7 @@ for epoch in range(num_epochs):
         labels = torch.from_numpy(labels)
         images = images.to(device)
         labels = labels.to(device)
-        print(labels)
+        #print(labels)
         # Forward pass
         outputs = model(images)
         loss = criterion(outputs, labels)

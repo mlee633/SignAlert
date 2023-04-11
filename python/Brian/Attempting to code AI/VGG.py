@@ -16,8 +16,8 @@ def data_loader(data_dir,
                 test=False):
   
     normalize = transforms.Normalize(
-        mean=[0.4914, 0.4822, 0.4465],
-        std=[0.2023, 0.1994, 0.2010],
+        mean=[0.4914],#, 0.4822, 0.4465],
+        std=[0.2023]#, 0.1994, 0.2010],
     )
 
     # define transforms
@@ -76,7 +76,7 @@ class VGG16(nn.Module):
     def __init__(self, num_classes=26):
         super(VGG16, self).__init__()
         self.layer1 = nn.Sequential(
-            nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(1, 64, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(64),
             nn.ReLU())
         self.layer2 = nn.Sequential(

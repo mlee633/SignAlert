@@ -1,19 +1,16 @@
 import torch 
-import torchvision
-
 from torch.utils.data import Dataset, DataLoader
 import torch.nn as nn
 import torchvision.transforms as transforms
-import csv
 import numpy as np
-import matplotlib.pyplot as plt
+
 from userDataset import userData
 from PIL import Image
 # Define relevant variables for the ML task #
-batch_size = 64
+batch_size = 50
 num_classes = 26
-learning_rate = 0.001
-num_epochs = 10
+learning_rate = 0.0001
+num_epochs = 15
 
 # Device will determine whether to run the training on GPU or CPU. #
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -21,15 +18,14 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 ### Loading the dataset + preprocessing ###
 ## Data is transformed to 32x32 because the LeNet5 model uses a 32x32 input ##
 # Training Dataset
-
-train_dataset = userData('/Users/shaaranelango/Downloads/project-1-python-team_16/dataset/sign_mnist_train.csv',transform=transforms.Compose([transforms.ToTensor(),transforms.Resize((32,32)),transforms.Normalize(mean = (0.1307,), std = (0.3081,))]))
+train_dataset = userData('/Users/shaaranelango/Downloads/project-1-python-team_16/dataset/sign_mnist_train.csv',transform=transforms.Compose([transforms.ToTensor(),transforms.Resize((32,32)),transforms.Normalize(mean = (0.1306,), std = (0.3082,))]))
 #train_dataset = torchvision.datasets.MNIST(root = './data',train = True,transform = transforms.Compose([transforms.Resize((32,32)),transforms.ToTensor(),transforms.Normalize(mean = (0.1307,), std = (0.3081,))]),download = True)
 
 # Testing Dataset
 #test_dataset = torchvision.datasets.MNIST(root = './data',train = False,transform = transforms.Compose([transforms.ToTensor(),transforms.Resize((32,32)),transforms.Normalize(mean = (0.1325,), std = (0.3105,))]),download=True)
-test_dataset = userData('/Users/shaaranelango/Downloads/project-1-python-team_16/dataset/sign_mnist_test.csv',transform=transforms.Compose([transforms.ToTensor(),transforms.Resize((32,32)),transforms.Normalize(mean = (0.1307,), std = (0.3081,))]))
+test_dataset = userData('/Users/shaaranelango/Downloads/project-1-python-team_16/dataset/sign_mnist_test.csv',transform=transforms.Compose([transforms.ToTensor(),transforms.Resize((32,32)),transforms.Normalize(mean = (0.1305,), std = (0.3084,))]))
 # Loading the trainer
-train_loader = DataLoader(dataset = train_dataset,batch_size = batch_size,shuffle = False)
+train_loader = DataLoader(dataset = train_dataset,batch_size = batch_size,shuffle = True)
 
 # Loading the tester
 test_loader = DataLoader(dataset = test_dataset,batch_size = batch_size,shuffle = False)
@@ -86,7 +82,7 @@ for epoch in range(num_epochs):
         labels = torch.from_numpy(labels)
         images = images.to(device)
         labels = labels.to(device)
-       # print(labels)
+        #print(labels)
         optimizer.zero_grad()
         #Forward pass
         outputs = model(images)

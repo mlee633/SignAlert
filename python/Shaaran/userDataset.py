@@ -1,5 +1,4 @@
-import torch
-import torchvision
+
 from torch.utils.data import Dataset, DataLoader
 import numpy as np
 from PIL import Image
@@ -10,7 +9,7 @@ class userData(Dataset):
         # data loading
         xy = np.genfromtxt(file, delimiter=",", dtype=np.uint8)[1:, :]
         self.x = (xy[:,1:])
-        self.y = (xy[:,[0]]) #number of samples, 1
+        self.y = (xy[:,[0]]) 
         self.n_samples = xy.shape[0]
         self.transform = transform
     def __getitem__(self,index):

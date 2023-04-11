@@ -1,9 +1,9 @@
 import sys
 import test
+
 import torch
 import torchvision
 import os
-#import scrollArea
 from PIL import Image
 from PyQt5.QtWidgets import QPushButton, QWidget, QTabWidget, QMainWindow, QAction, QFileDialog, QVBoxLayout, QApplication
 class MainWindow(QMainWindow):

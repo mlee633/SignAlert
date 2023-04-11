@@ -4,6 +4,7 @@ import torch.nn as nn
 from torchvision import datasets
 from torchvision import transforms
 from torch.utils.data.sampler import SubsetRandomSampler
+from userDataset import userData
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -21,33 +22,27 @@ def data_loader(data_dir,
 
     # define transforms
     transform = transforms.Compose([
-            transforms.Resize((227,227)),
             transforms.ToTensor(),
+            transforms.Resize((227,227)),
             normalize,
     ])
 
-    if test:
-        dataset = datasets.CIFAR100(
-          root=data_dir, train=False,
-          download=True, transform=transform,
-        )
+    #if test:
+    #    dataset = datasets.CIFAR100(
+    #      root=data_dir, train=False,
+    #      download=True, transform=transform,
+    #    )
 
-        data_loader = torch.utils.data.DataLoader(
-            dataset, batch_size=batch_size, shuffle=shuffle
-        )
+    #    data_loader = torch.utils.data.DataLoader(
+    #        dataset, batch_size=batch_size, shuffle=shuffle
+    #    )
 
-        return data_loader
+    #    return data_loader
 
     # load the dataset
-    train_dataset = datasets.CIFAR100(
-        root=data_dir, train=True,
-        download=True, transform=transform,
-    )
+    train_dataset = userData(data_dir, transform = transform)
 
-    valid_dataset = datasets.CIFAR10(
-        root=data_dir, train=True,
-        download=True, transform=transform,
-    )
+    valid_dataset = userData(data_dir, transform = transform)
 
     num_train = len(train_dataset)
     indices = list(range(num_train))
@@ -69,15 +64,16 @@ def data_loader(data_dir,
 
     return (train_loader, valid_loader)
 
+# Personal MINIST dataset 
+train_loader, valid_loader = data_loader('C:\\Users\\brian\Downloads\\archive\sign_mnist_train\\sign_mnist_train.csv', batch_size=64)
 
-# CIFAR100 dataset 
-train_loader, valid_loader = data_loader(userData('C:\Users\brian\Downloads\archive\sign_mnist_train',transform=transforms.Compose([transforms.ToTensor(),transforms.Resize((32,32)),transforms.Normalize(mean = (0.1305,), std = (0.3084,))])), batch_size= 42)
+#test_loader = data_loader("C:\\Users\\brian\Downloads\\archive\sign_mnist_train\\sign_mnist_train.csv",
+#                              batch_size=64,
+#                              test=True)
 
-test_loader = data_loader(userData('C:\Users\brian\Downloads\archive\sign_mnist_train',transform=transforms.Compose([transforms.ToTensor(),transforms.Resize((32,32)),transforms.Normalize(mean = (0.1305,), std = (0.3084,))])), batch_size= 42,
-                              test=True)
 
 class VGG16(nn.Module):
-    def __init__(self, num_classes=10):
+    def __init__(self, num_classes=26):
         super(VGG16, self).__init__()
         self.layer1 = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1),
@@ -168,20 +164,4 @@ class VGG16(nn.Module):
         return out
     
 
-
-num_classes = 26
-num_epochs = 20
-batch_size = 16
-learning_rate = 0.005
-
-model = VGG16(num_classes).to(device)
-
-
-# Loss and optimizer
-criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, weight_decay = 0.005, momentum = 0.9)  
-
-
-# Train the model
-total_step = len(train_loader)
 

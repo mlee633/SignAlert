@@ -1,4 +1,5 @@
-from VGG import VGG16, device, nn, torch, train_loader,valid_loader
+from VGG import VGG16, device, nn, torch, train_loader,valid_loader, np
+
 
 num_classes = 26
 num_epochs = 20
@@ -22,9 +23,12 @@ total_step = len(train_loader)
 for epoch in range(num_epochs):
     for i, (images, labels) in enumerate(train_loader):  
         # Move tensors to the configured device
+        labels = labels.T
+        labels = np.ravel(labels)
+        labels = torch.from_numpy(labels)
         images = images.to(device)
         labels = labels.to(device)
-        
+        print(labels)
         # Forward pass
         outputs = model(images)
         loss = criterion(outputs, labels)

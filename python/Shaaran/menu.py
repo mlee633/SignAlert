@@ -1,5 +1,4 @@
 import customtkinter
-import trainingWindow
 import testWindow
 from tkinter import *
 from tkinter.ttk import *
@@ -42,7 +41,7 @@ class App(customtkinter.CTk):
         self.sidebar_frame.grid_rowconfigure(4, weight=1)
         self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="SignAlert", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.sidebar_button_1 = customtkinter.CTkButton(self.sidebar_frame, text="Training", command=trainingWindow.trainWindow)
+        self.sidebar_button_1 = customtkinter.CTkButton(self.sidebar_frame, text="Training", command=trainWindow)
         self.sidebar_button_1.grid(row=1, column=0, padx=20, pady=10)
         self.sidebar_button_2 = customtkinter.CTkButton(self.sidebar_frame, command=testWindow.app, text="Testing")
         self.sidebar_button_2.grid(row=2, column=0, padx=20, pady=10)
@@ -104,7 +103,13 @@ class App(customtkinter.CTk):
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         customtkinter.set_widget_scaling(new_scaling_float)
 
-
+class trainWindow(customtkinter.CTk):
+    def __init__(self):
+        super().__init__()
+        self.title("SignAlert - Train")
+        self.geometry(f"{650}x{450}")
+        self.main_button = customtkinter.CTkButton(master=self, fg_color="transparent", border_width=2, text="Ok", text_color=("gray10", "#DCE4EE"), command= self.destroy)
+        self.main_button.grid(row=1, column=3, padx=(30, 30), pady=(30, 30), sticky="nsew")
 if __name__ == "__main__":
     app = App()
     app.mainloop()

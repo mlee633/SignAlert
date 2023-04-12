@@ -1,11 +1,13 @@
-from VGG import VGG16, device, nn, torch, train_loader,valid_loader, np
+from VGG import VGG16_autoencoder, device, nn, torch, train_loader,valid_loader, np
 
 num_classes = 26
 num_epochs = 20
 batch_size = 16
 learning_rate = 0.005
 
-model = VGG16(num_classes).to(device)
+model = VGG16_autoencoder(num_classes).to(device)
+model.save("checkpoint1.pth")
+model.load_checkpoint("checkpoint1.pth")
 
 
 # Loss and optimizer

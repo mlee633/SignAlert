@@ -7,6 +7,7 @@ from torch.utils.data.sampler import SubsetRandomSampler
 from userDataset import userData
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(torch.cuda.is_available())
 
 def data_loader(data_dir,
                 batch_size,
@@ -65,16 +66,16 @@ def data_loader(data_dir,
     return (train_loader, valid_loader)
 
 # Personal MINIST dataset 
-train_loader, valid_loader = data_loader('C:\\Users\\brian\Downloads\\archive\sign_mnist_train\\sign_mnist_train.csv', batch_size=64)
+train_loader, valid_loader = data_loader('C:\\Users\\OEM\\Downloads\\archive\sign_mnist_train\\sign_mnist_train.csv', batch_size=64)
 
 #test_loader = data_loader("C:\\Users\\brian\Downloads\\archive\sign_mnist_train\\sign_mnist_train.csv",
 #                              batch_size=64,
 #                              test=True)
 
 
-class VGG16(nn.Module):
+class VGG16_encoder(nn.Module):
     def __init__(self, num_classes=26):
-        super(VGG16, self).__init__()
+        super(VGG16_encoder, self).__init__()
         self.layer1 = nn.Sequential(
             nn.Conv2d(1, 64, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(64),
@@ -158,10 +159,42 @@ class VGG16(nn.Module):
         out = self.layer12(out)
         out = self.layer13(out)
         out = out.reshape(out.size(0), -1)
+        #out = self.fc(out)
+        #out = self.fc1(out)
+        #out = self.fc2(out)
+        return out
+    
+class VGG16_decoder(nn.module):
+    def __init__(self, num_classes=26):
+        super(VGG16_decoder, self).__init__()
+        self.fc = nn.Sequential(
+            nn.Dropout(0.5),
+            nn.Linear(7*7*512, 4096),
+            nn.ReLU())
+        self.fc1 = nn.Sequential(
+            nn.Dropout(0.5),
+            nn.Linear(4096, 4096),
+            nn.ReLU())
+        self.fc2= nn.Sequential(
+            nn.Linear(4096, num_classes))
+
+    def forward(self, x):    
         out = self.fc(out)
         out = self.fc1(out)
         out = self.fc2(out)
+
+class VGG16_autoencoder(nn.module):
+    def __init__(self, num_classes = 26):
+        super(VGG16_autoencoder, self).__init__()
+        self.encoder = VGG16_encoder();
+        self.decoder = VGG16_decoder();
+
+    def forward(self, x):
+        out = self.encoder(x) #same as self.encoder.forward(x)
+        out = self.decoder(out)
         return out
-    
+
+    def load_checkpoint(self, checkpoint):
+         self.encoder.load(checkpoint)
 
 

@@ -10,10 +10,10 @@ customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "gre
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
-
         self.title("SignAlert")
-        self.geometry(f"{650}x{450}")
-        
+        # Making the screen centred #
+        self.centre()
+
         self.makeSidebar()
         self.scaling_label = customtkinter.CTkLabel(self.sidebar_frame, text="UI Scaling:", anchor="w")
         self.scaling_label.grid(row=5, column=0, padx=20, pady=(10, 0))
@@ -48,11 +48,16 @@ class App(customtkinter.CTk):
         self.sidebar_button_2.grid(row=2, column=0, padx=20, pady=10)
         self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
         self.appearance_mode_label.grid(row=3, column=0, padx=20, pady=(10, 0))
-        self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["Light", "Dark", "System"],
+        self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["System", "Light", "Dark"],
                                                                        command=self.change_appearance_mode_event)
         self.appearance_mode_optionemenu.grid(row=4, column=0, padx=20, pady=(10, 10))
 
-    
+    def centre(self):
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        x_cordinate = int((screen_width/2) - (650/2))
+        y_cordinate = int((screen_height/2) - (450/2))
+        self.geometry("{}x{}+{}+{}".format(650, 450, x_cordinate, y_cordinate))
     def makeTabview(self):
         # create tabview
         self.tabview = customtkinter.CTkTabview(self, width=250)

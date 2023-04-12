@@ -2,11 +2,22 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+#from quick_trial import *
 
 
 class MyWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.setGeometry(300, 300, 400, 300)
+
+        btn1 = QPushButton("Button1")
+        btn2 = QPushButton("Button2")
+
+        layout = QVBoxLayout()
+        layout.addWidget(btn1)
+        layout.addWidget(btn2)
+        self.setLayout(layout)
+
 
         # slider for Epoch
         self.lb2 = QLabel('Choose number of Epoch:',self)
@@ -97,11 +108,10 @@ class MyWindow(QMainWindow):
         print("fuck u")
     
 
-print("SignAlert Tool has been open")
-app = QApplication(sys.argv)
-
-window = MyWindow()
-window.show()
-
-app.exec_()
-print("SignAlert Tool has been closed")
+if __name__ == "__main__":
+    print("SignAlert Tool has been open")
+    app = QApplication(sys.argv)
+    window = MyWindow()
+    window.show()
+    app.exec_()
+    print("SignAlert Tool has been closed")

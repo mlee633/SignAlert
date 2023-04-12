@@ -69,11 +69,15 @@ criterion = nn.CrossEntropyLoss()
 
 optimizer = torch.optim.SGD(model.parameters(), lr = learning_rate, weight_decay = 0.005, momentum = 0.9)
 
-#EPOCH = 20
-#PATH = "model.pt"
-#LOSS = 
-
 total_step = len(train_loader)
+
+FILE = "modelV1.pth"
+torch.save(model.state_dict(), FILE)
+#====Apparently lazy method of saving models===
+#FILE = "modelV1.pth"
+#torch.save(model, FILE)
+#model = torch.load(FILE)
+#model.eval()
 
 for epoch in range(num_epochs):
     for i, (images, labels) in enumerate(train_loader):
@@ -95,7 +99,7 @@ for epoch in range(num_epochs):
 with torch.no_grad():
     correct = 0
     total = 0
-    for images, labels in train_loader:
+    for images, labels in test_loader:
         labels = labels.T
         labels = np.ravel(labels)
         labels = torch.from_numpy(labels)

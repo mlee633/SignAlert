@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 from CNN_model import CNN, nn
-from GUI_loading import QApplication, MyApp, sys, self 
+from GUI_loading import QApplication, MyApp, sys
 from dataset import userData
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
@@ -69,7 +69,7 @@ for epoch in range(num_epochs):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        self.step += 1
+        MyApp.step = epoch
 
     print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, num_epochs, loss.item()))
 

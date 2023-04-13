@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QPushButton, QMessageBox, QCheckBox, QColorDialog
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QColor
 from PyQt5.QtCore import Qt, QSettings
 
 class MainMenu(QWidget):
@@ -68,25 +68,16 @@ class MainMenu(QWidget):
         self.setLayout(vbox)
         self.show()
 
-        # Set the appearance variable
-        self.appearance = "light"
-
     def open_training(self):
         print('Opening Training Tab...')
 
     def open_testing(self):
         print('Opening Testing Tab...')
 
-    def change_color(self):
-        color = QColorDialog.getColor()
-        if color.isValid():
-            self.setStyleSheet(f"background-color: {color.name()};")
-
-
     def show_exit_popup(self):
         settings = QSettings('MyCompany', 'MyApp')
         if settings.value('confirm_exit', True, type=bool):
-            confirm_exit = QMessageBox(parent=None)
+            confirm_exit = QMessageBox(parent=self)
             confirm_exit.setIcon(QMessageBox.Question)
             confirm_exit.setText("Would you like to exit?")
             confirm_exit.setWindowTitle("Exit")
@@ -94,20 +85,3 @@ class MainMenu(QWidget):
             confirm_exit.setCheckBox(dont_ask_again_checkbox)
             confirm_exit.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
             confirm_exit.setDefaultButton(QMessageBox.No)
-
-            # Set the geometry of the message box
-            confirm_exit.setGeometry(self.geometry().center().x() - confirm_exit.width() // 2,
-                                    self.geometry().center().y() - confirm_exit.height() // 2,
-                                    confirm_exit.width(), confirm_exit.height())
-
-            if confirm_exit.exec_() == QMessageBox.Yes:
-                settings.setValue('confirm_exit', not dont_ask_again_checkbox.isChecked())
-                QApplication.quit()
-
-        else:
-            QApplication.quit()
-
-if __name__ == '__main__':
-    app = QApplication([])
-    main_menu = MainMenu()
-    app.exec_()

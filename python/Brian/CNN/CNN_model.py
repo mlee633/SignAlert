@@ -27,8 +27,8 @@ test_dataset = userData('C:\\Users\\OEM\\Downloads\\archive\sign_mnist_test\\sig
 
 train_loader = DataLoader(dataset = train_dataset, batch_size = batch_size, shuffle = True)
 test_loader = DataLoader(dataset = test_dataset, batch_size = batch_size, shuffle = False) """ 
-
-def initParam(batch_size, num_classes, learning_rate, num_epochs, data_file):
+#will add a parameter for the csv file directory
+def initParam(batch_size, num_classes, learning_rate, num_epochs):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu') 
     train_dataset = userData('C:\\Users\\OEM\\Downloads\\archive\sign_mnist_train\\sign_mnist_train.csv',
                          transform=transforms.Compose([transforms.ToTensor(),

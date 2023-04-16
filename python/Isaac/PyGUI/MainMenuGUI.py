@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QPushButton, QMessageBox, QCheckBox, QColorDialog
-from PyQt5.QtGui import QIcon, QColor
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QMessageBox, QCheckBox, QColorDialog
+from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt, QSettings
 
 class MainMenu(QWidget):
@@ -18,20 +18,16 @@ class MainMenu(QWidget):
         self.move(frame_geometry.topLeft())
 
     def initUI(self):
-        # Choose Model section
-        choose_model_label = QLabel('Choose Model:')
-        choose_model_label.setAlignment(Qt.AlignLeft)
-        options_bar = QComboBox()
-        options_bar.addItems(['LeNet', 'AlexNet', 'BriaNet'])
+        # SignAlert logo
+        logo_label = QLabel()
+        pixmap = QPixmap('C:\\Users\\healt\\OneDrive\\문서\\GitHub\\project-1-python-team_16\\python\\Isaac\\PyGUI\\signalertlogo.png')
+        pixmap = pixmap.scaledToWidth(200)
+        logo_label.setPixmap(pixmap)
+        logo_label.setAlignment(Qt.AlignCenter)
 
-        # Select button
-        select_button = QPushButton('Select')
-        select_button.clicked.connect(lambda: print(f"Model {options_bar.currentText()} Selected"))
-
-        choose_model_hbox = QHBoxLayout()
-        choose_model_hbox.addWidget(choose_model_label)
-        choose_model_hbox.addWidget(options_bar)
-        choose_model_hbox.addWidget(select_button)
+        # Introduction text
+        intro_label = QLabel('Hello, this is SignAlert and we are a Sign language converter tool!')
+        intro_label.setAlignment(Qt.AlignCenter)
 
         # Training and Testing section
         train_button = QPushButton('Training')
@@ -41,15 +37,7 @@ class MainMenu(QWidget):
         train_test_hbox = QHBoxLayout()
         train_test_hbox.addWidget(train_button)
         train_test_hbox.addWidget(test_button)
-
-        # Appearance section
-        appearance_label = QLabel('Appearance:')
-        appearance_label.setAlignment(Qt.AlignLeft)
-        color_button = QPushButton('Select Color')
-        color_button.clicked.connect(self.change_color)
-        appearance_hbox = QHBoxLayout()
-        appearance_hbox.addWidget(appearance_label)
-        appearance_hbox.addWidget(color_button)
+        train_test_hbox.setAlignment(Qt.AlignCenter)
 
         # Exit button
         exit_button = QPushButton('Exit')
@@ -57,11 +45,10 @@ class MainMenu(QWidget):
 
         # Main layout
         vbox = QVBoxLayout()
-        vbox.addLayout(choose_model_hbox)
+        vbox.addWidget(logo_label)
+        vbox.addWidget(intro_label)
         vbox.addSpacing(20)
         vbox.addLayout(train_test_hbox)
-        vbox.addSpacing(20)
-        vbox.addLayout(appearance_hbox)
         vbox.addStretch()
         vbox.addWidget(exit_button, alignment=Qt.AlignRight)
 
@@ -74,10 +61,16 @@ class MainMenu(QWidget):
     def open_testing(self):
         print('Opening Testing Tab...')
 
+    def change_color(self):
+        color = QColorDialog.getColor()
+        if color.isValid():
+            self.setStyleSheet(f"background-color: {color.name()};")
+
+
     def show_exit_popup(self):
         settings = QSettings('MyCompany', 'MyApp')
         if settings.value('confirm_exit', True, type=bool):
-            confirm_exit = QMessageBox(parent=self)
+            confirm_exit = QMessageBox(parent=None)
             confirm_exit.setIcon(QMessageBox.Question)
             confirm_exit.setText("Would you like to exit?")
             confirm_exit.setWindowTitle("Exit")
@@ -85,3 +78,20 @@ class MainMenu(QWidget):
             confirm_exit.setCheckBox(dont_ask_again_checkbox)
             confirm_exit.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
             confirm_exit.setDefaultButton(QMessageBox.No)
+
+            # Set the geometry of the message box
+            confirm_exit.setGeometry(self.geometry().center().x() - confirm_exit.width() // 2,
+                                    self.geometry().center().y() - confirm_exit.height() // 2,
+                                    confirm_exit.width(), confirm_exit.height())
+
+            if confirm_exit.exec_() == QMessageBox.Yes:
+                settings.setValue('confirm_exit', not dont_ask_again_checkbox.isChecked())
+                QApplication.quit()
+
+        else:
+            QApplication.quit()
+
+if __name__ == '__main__':
+    app = QApplication([])
+    main_menu = MainMenu()
+    app.exec_()

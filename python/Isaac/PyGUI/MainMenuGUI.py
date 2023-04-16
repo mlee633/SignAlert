@@ -7,7 +7,7 @@ class MainMenu(QWidget):
         super().__init__()
         self.setWindowTitle('SignAlert')
         self.setWindowIcon(QIcon('C:\\Users\\healt\\OneDrive\\문서\\GitHub\\project-1-python-team_16\\python\\Isaac\\PyGUI\\ASL-icon.png'))
-        self.setGeometry(300, 300, 700, 450)
+        self.setGeometry(300, 300, 500, 350)
         self.center()
         self.initUI()
 
@@ -26,7 +26,7 @@ class MainMenu(QWidget):
         logo_label.setAlignment(Qt.AlignCenter)
 
         # Introduction text
-        intro_label = QLabel('Hello, this is SignAlert and we are a Sign language converter tool!')
+        intro_label = QLabel('"HELLO, THIS IS A SIGNALERT AND WE ARE A SIGN LANGAUGE TOOL CONVERTER"')
         intro_label.setAlignment(Qt.AlignCenter)
 
         # Training and Testing section

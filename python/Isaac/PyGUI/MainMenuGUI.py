@@ -21,7 +21,7 @@ class MainMenu(QWidget):
         # SignAlert logo
         logo_label = QLabel()
         pixmap = QPixmap('C:\\Users\\healt\\OneDrive\\문서\\GitHub\\project-1-python-team_16\\python\\Isaac\\PyGUI\\signalertlogo.png')
-        pixmap = pixmap.scaledToWidth(200)
+        pixmap = pixmap.scaledToWidth(600)
         logo_label.setPixmap(pixmap)
         logo_label.setAlignment(Qt.AlignCenter)
 
@@ -95,3 +95,4 @@ if __name__ == '__main__':
     app = QApplication([])
     main_menu = MainMenu()
     app.exec_()
+

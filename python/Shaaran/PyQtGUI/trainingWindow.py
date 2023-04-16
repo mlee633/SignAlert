@@ -1,19 +1,29 @@
 import sys
+import test
+import numpy
 from PyQt5.QtWidgets import*
+from PyQt5.QtCore import*
 
+nameFile = "None Selected"
 
 class trainWindow(QWidget):
-
+    
     def __init__(self):
         super().__init__()
+        self.label1 = QLabel(str(nameFile), self)
+        self.sliderText = QLabel()
+        self.slider = QSlider(Qt.Horizontal, self)
         self.initUI()
+
 
     def initUI(self):
         grid = QGridLayout()
-        grid.addWidget(self.createFirstExclusiveGroup(), 0, 0)
-        grid.addWidget(self.createSecondExclusiveGroup(), 1, 0)
-        grid.addWidget(self.createNonExclusiveGroup(), 0, 1)
-        grid.addWidget(self.createPushButtonGroup(), 1, 1)
+        grid.addWidget(self.createUserDataset(), 0, 0)
+        grid.addWidget(self.createChooseModel(), 1, 0)
+        grid.addWidget(self.createParameters(), 0, 1)
+        self.trainGroupBox = self.createStartTraining()
+        self.trainGroupBox.setEnabled(False)
+        grid.addWidget(self.trainGroupBox, 1, 1)
 
         self.setLayout(grid)
 
@@ -21,19 +31,32 @@ class trainWindow(QWidget):
         self.setGeometry(300, 300, 700, 450)
         self.show()
 
-    def createFirstExclusiveGroup(self):
+    def createUserDataset(self):
         groupbox = QGroupBox('Choose Training Dataset (.csv format)')
-
+        
+        self.slider.setRange(50, 90)
+        self.slider.setSingleStep(2)                    # Step size
+        self.slider.setTickInterval(10)                 # Tick interval
+        self.slider.setTickPosition(2)                  # Tick options
+        self.slider.valueChanged.connect(self.sliderChange)
         fileOpenButton = QPushButton('Select Dataset')
+        self.sliderText = QLabel('Train/Validation ratio: ' + str(self.slider.value()) + '/' + str(100-self.slider.value()))
         fileOpenButton.clicked.connect(self.buttonClick)
+        
 
         vbox = QVBoxLayout()
+
         vbox.addWidget(fileOpenButton)
+        vbox.addWidget(self.label1)
+        vbox.addStretch(2)
+        vbox.addWidget(self.sliderText)
+        vbox.addWidget(self.slider)
+        vbox.addStretch(1)
         groupbox.setLayout(vbox)
 
         return groupbox
 
-    def createSecondExclusiveGroup(self):
+    def createChooseModel(self):
         groupbox = QGroupBox('Choose type of CNN model to use:')
         radio1 = QRadioButton('LeNet5')
         radio2 = QRadioButton('AlexNet')
@@ -47,62 +70,67 @@ class trainWindow(QWidget):
         groupbox.setLayout(vbox)
         return groupbox
 
-    def createNonExclusiveGroup(self):
-        groupbox = QGroupBox('Non-Exclusive Checkboxes')
-        groupbox.setFlat(True)                              # set different style of groupbox
+    def createParameters(self):
+        groupbox = QGroupBox('Change Hyperparameters')
+        epochBox = QSpinBox()
+        epochBox.setRange(5,20)
+        epochLabel = QLabel("Number of epochs (5 - 20 range)")
+        epochHbox = QHBoxLayout()
+        epochHbox.addWidget(epochLabel)
+        epochHbox.addWidget(epochBox)
+        epochHbox.addStretch(1)
 
-        checkbox1 = QCheckBox('Checkbox1')
-        checkbox2 = QCheckBox('Checkbox2')
-        checkbox2.setChecked(True)
-        tristatebox = QCheckBox('Tri-state Button')
-        tristatebox.setTristate(True)
+        batchLabel = QLabel("Batch Size: (30 - 128 Range)")
+        batchBox = QSpinBox()
+        batchBox.setRange(30,128)
+        batchHbox = QHBoxLayout()
+        batchHbox.addWidget(batchLabel)
+        batchHbox.addWidget(batchBox)
+        batchHbox.addStretch(1)
 
+        learnLabel = QLabel("Learning Rate: (0.001 - 0.1 range)")
+        learnBox = QDoubleSpinBox()
+        learnBox.setRange(0.001,0.1)
+        learnBox.setSingleStep(0.001)
+        learnBox.setDecimals(3)
+        learnHbox = QHBoxLayout()
+        learnHbox.addWidget(learnLabel)
+        learnHbox.addWidget(learnBox)
+        learnHbox.addStretch(1)
         vbox = QVBoxLayout()
-        vbox.addWidget(checkbox1)
-        vbox.addWidget(checkbox2)
-        vbox.addWidget(tristatebox)
+        vbox.addLayout(epochHbox)
+        vbox.addLayout(batchHbox)
+        vbox.addLayout(learnHbox)
+
+        #vbox.addWidget(tristatebox)
         vbox.addStretch(1)
         groupbox.setLayout(vbox)
 
         return groupbox
 
-    def createPushButtonGroup(self):
-        groupbox = QGroupBox('Push Buttons')
-        groupbox.setCheckable(True)
-        groupbox.setChecked(True)
+    def createStartTraining(self):
+        
+        groupbox = QGroupBox('Train and view dataset')
+        
 
         # different push buttons
-        pushbutton = QPushButton('Normal Button')
-        togglebutton = QPushButton('Toggle Button')
-        togglebutton.setCheckable(True)
-        togglebutton.setChecked(True)
-        flatbutton = QPushButton('Flat Button')
-        flatbutton.setFlat(True)
-        popupbutton = QPushButton('Popup Button')
-        menu = QMenu(self)
-        menu.addAction('First Item')
-        menu.addAction('Second Item')
-        menu.addAction('Third Item')
-        menu.addAction('Fourth Item')
-        popupbutton.setMenu(menu)
-
+        startTrainButton = QPushButton('Train Model using selected dataset')
+        viewImageButton = QPushButton('View images from dataset')
         vbox = QVBoxLayout()
-        vbox.addWidget(pushbutton)
-        vbox.addWidget(togglebutton)
-        vbox.addWidget(flatbutton)
-        vbox.addWidget(popupbutton)
+        vbox.addWidget(startTrainButton)
+        vbox.addWidget(viewImageButton)
         vbox.addStretch(1)
         groupbox.setLayout(vbox)
 
         return groupbox
     def buttonClick(self):
         nameFile= QFileDialog.getOpenFileName(self,"Open training dataset",r"<Default dir>", "CSV (*.csv);;All Files (*)")
-        print(nameFile)
-        training_data = test.funct(nameFile[0])
-        print(training_data.ndim)
-        print(training_data[:, 0])
-        print(training_data[1: , 1].ndim)
-
+        self.label1.setText("Directory: \n" + nameFile[0])
+        self.label1.adjustSize()       # adjust the label size automatically
+        self.trainGroupBox.setEnabled(True)
+    def sliderChange(self):
+        self.sliderText.setText('Train/Validation ratio: ' + str(self.slider.value()) + '/' + str(100-self.slider.value()))
+        self.sliderText.adjustSize()
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = trainWindow()

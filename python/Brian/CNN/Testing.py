@@ -1,10 +1,13 @@
 import torch
 import numpy as np
 from CNN_model import CNN, nn
-from GUI_loading import QApplication, MyApp, sys
 from dataset import userData
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
+import sys
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QProgressBar
+from tqdm import tqdm #for progress bar on console
+from GUI_loading import MyApp
 
 batch_size = 50
 num_classes = 26
@@ -33,9 +36,6 @@ criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr = learning_rate, weight_decay = 0.005, momentum = 0.9)
 
 total_step = len(train_loader)
-
-app = QApplication(sys.argv)
-ex = MyApp()
 
 #Saving and loading of model. The print function within for loop (lines 81 and 82) to see the tensors within the trained model
 #FILE = "modelV1.pth"
@@ -90,4 +90,8 @@ with torch.no_grad():
 
     print('Accuracy of the network on the {} train images: {} %'.format(27455, 100*correct/total))
 
-sys.exit(app.exec_())
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ex = MyApp()
+    #initParam(50, 26, 0.001, 20)
+    sys.exit(app.exec_())

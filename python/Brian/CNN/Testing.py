@@ -47,12 +47,13 @@ class Test_Train:
         app = QApplication(sys.argv)
         gui = MyApp()
 
-        for param in model.parameters():
-            print(param.size())
+        #To check the size, size of input and output channels. 
+        #for param in model.parameters():
+           # print(param.size())
 
 
         for epoch in range(self.num_epochs):
-            for i, (images, labels) in tqdm(enumerate(train_loader), total = len(train_loader), leave = False):
+            for i, (images, labels) in enumerate(train_loader): #tqdm(enumerate(train_loader), total = len(train_loader), leave = False):
                 labels = labels.T
                 labels = np.ravel(labels)
                 labels = torch.from_numpy(labels)
@@ -66,8 +67,8 @@ class Test_Train:
                 loss.backward()
                 optimizer.step()
                 #gui.pbar.setValue(gui.pbar.value()+ 1/(self.num_epochs * self.batch_size))
-                gui.updateProgress(i/100) #using the tqdm values to make the progress bar. I is the number of cycles done?
-                time.sleep(0.1)
+                gui.show()
+                gui.startThread(int(i/100)) #using the tqdm values to make the progress bar. I is the number of cycles done?
                 
 
             print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, self.num_epochs, loss.item()))
@@ -91,7 +92,11 @@ class Test_Train:
 
 if __name__ == '__main__':
     stupid = Test_Train(50, 26, 0.001, 20)
-    device, train_set, test_set = stupid.setting_up('C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', 'C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_test.csv')
+    device, train_set, test_set = stupid.setting_up('C:\\Users\\OEM\\Downloads\\archive\sign_mnist_train\\sign_mnist_train.csv', 'C:\\Users\\OEM\\Downloads\\archive\sign_mnist_test\\sign_mnist_test.csv')
     train_load, test_load = stupid.loading_up(train_set, test_set)
     #print(train_load.size())
     stupid.runModel(train_load, test_load, device)
+
+    #All stuff underneath is just the required file directory for testing on different devices. 
+    #'C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_train.csv'
+    #'C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_test.csv'

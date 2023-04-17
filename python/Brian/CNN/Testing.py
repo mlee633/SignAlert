@@ -1,97 +1,97 @@
 import torch
-import numpy as np
-from CNN_model import CNN, nn
 from dataset import userData
 import torchvision.transforms as transforms
-from torch.utils.data import DataLoader
-import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QProgressBar
-from tqdm import tqdm #for progress bar on console
+import numpy as np
+import torch.nn as nn
+from CNN_model import CNN
 from GUI_loading import MyApp
+from PyQt5.QtWidgets import QApplication
+import sys
+from tqdm import tqdm
+from torch.utils.data import DataLoader
+import time
 
-batch_size = 50
-num_classes = 26
-learning_rate = 0.001
-num_epochs = 20
+class Test_Train:
+    def __init__(self, batch_size, num_classes, learning_rate, num_epochs):
+        self.batch_size = batch_size
+        self.num_classes = num_classes
+        self.learning_rate = learning_rate
+        self.num_epochs = num_epochs
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-train_dataset = userData('C:\\Users\\OEM\\Downloads\\archive\sign_mnist_train\\sign_mnist_train.csv',
+    def setting_up(self, file_location_train, file_location_test):
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        train_dataset = userData(file_location_train,
                          transform=transforms.Compose([transforms.ToTensor(),
                                                         transforms.Resize((32,32)),
                                                         transforms.Normalize(mean = (0.1306,), std = (0.3082,))]))
-
-test_dataset = userData('C:\\Users\\OEM\\Downloads\\archive\sign_mnist_test\\sign_mnist_test.csv',
+        test_dataset = userData(file_location_test,
                          transform=transforms.Compose([transforms.ToTensor(),
                                                         transforms.Resize((32,32)),
                                                         transforms.Normalize(mean = (0.1306,), std = (0.3082,))]))
+        return device, train_dataset, test_dataset 
+    
+    def loading_up(self, train_dataset, test_dataset):
+        train_loader = DataLoader(dataset = train_dataset, batch_size = self.batch_size, shuffle = True)
+        test_loader = DataLoader(dataset = test_dataset, batch_size = self.batch_size, shuffle = False) 
+    
+        return train_loader, test_loader
+    
+    def runModel(self, train_loader, test_loader, device):
+        #Remember to add in if statements to allow users to change models here. 
+        model = CNN(self.num_classes)
 
-train_loader = DataLoader(dataset = train_dataset, batch_size = batch_size, shuffle = True)
-test_loader = DataLoader(dataset = test_dataset, batch_size = batch_size, shuffle = False) 
+        criterion = nn.CrossEntropyLoss()
 
-model = CNN(num_classes)
+        optimizer = torch.optim.SGD(model.parameters(), lr = self.learning_rate, weight_decay = 0.005, momentum = 0.9)
 
-criterion = nn.CrossEntropyLoss()
+        app = QApplication(sys.argv)
+        gui = MyApp()
 
-optimizer = torch.optim.SGD(model.parameters(), lr = learning_rate, weight_decay = 0.005, momentum = 0.9)
-
-total_step = len(train_loader)
-
-#Saving and loading of model. The print function within for loop (lines 81 and 82) to see the tensors within the trained model
-#FILE = "modelV1.pth"
-#torch.save(model.state_dict(), FILE)    #Can uncomment this if u like. Refer to this link https://www.youtube.com/watch?v=9L9jEOwRrCg for directions on how to save on CPU or GPU or both
-#loaded_model = CNN(num_classes)
-#loaded_model.load_state_dict(torch.load(FILE))
-#loaded_model.eval()
-
-#for param in model.parameters():
-#    print(param)
-
-#====Apparently lazy method of saving models===
-#FILE = "modelV1.pth"
-#torch.save(model, FILE)
-#model = torch.load(FILE)
-#model.eval()
-
-#Uncomment all below this if wanting to train the model again from scratch. 
-#tqdm for the progress bar stuff on console. 
-for epoch in range(num_epochs):
-    for i, (images, labels) in enumerate(train_loader): #tqdm(enumerate(train_loader), total = len(train_loader), leave = False):
-        labels = labels.T
-        labels = np.ravel(labels)
-        labels = torch.from_numpy(labels)
-        images = images.to(device)
-        labels = labels.to(device)
-
-        outputs = model(images) 
-        loss = criterion(outputs, labels)
-
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        MyApp.step = epoch
-
-    print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, num_epochs, loss.item()))
+        for param in model.parameters():
+            print(param.size())
 
 
-with torch.no_grad():
-    correct = 0
-    total = 0    
-    for images, labels in test_loader:
-        labels = labels.T
-        labels = np.ravel(labels)
-        labels = torch.from_numpy(labels)
-        images = images.to(device)
-        labels = labels.to(device)
-        outputs = model(images)
-        _, predicted = torch.max(outputs.data, 1)
-        total += labels.size(0)
-        correct += (predicted == labels).sum().item()
+        for epoch in range(self.num_epochs):
+            for i, (images, labels) in tqdm(enumerate(train_loader), total = len(train_loader), leave = False):
+                labels = labels.T
+                labels = np.ravel(labels)
+                labels = torch.from_numpy(labels)
+                images = images.to(device)
+                labels = labels.to(device)
 
-    print('Accuracy of the network on the {} train images: {} %'.format(27455, 100*correct/total))
+                outputs = model(images) 
+                loss = criterion(outputs, labels)
+
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+                #gui.pbar.setValue(gui.pbar.value()+ 1/(self.num_epochs * self.batch_size))
+                gui.updateProgress(i/100) #using the tqdm values to make the progress bar. I is the number of cycles done?
+                time.sleep(0.1)
+                
+
+            print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, self.num_epochs, loss.item()))
+
+        with torch.no_grad():
+            correct = 0
+            total = 0    
+            for images, labels in test_loader:
+                labels = labels.T
+                labels = np.ravel(labels)
+                labels = torch.from_numpy(labels)
+                images = images.to(device)
+                labels = labels.to(device)
+                outputs = model(images)
+                _, predicted = torch.max(outputs.data, 1)
+                total += labels.size(0)
+                correct += (predicted == labels).sum().item()
+
+            print('Accuracy of the network on the {} train images: {} %'.format(27455, 100*correct/total)) 
+        sys.exit(app.exec_())
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    ex = MyApp()
-    #initParam(50, 26, 0.001, 20)
-    sys.exit(app.exec_())
+    stupid = Test_Train(50, 26, 0.001, 20)
+    device, train_set, test_set = stupid.setting_up('C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', 'C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_test.csv')
+    train_load, test_load = stupid.loading_up(train_set, test_set)
+    #print(train_load.size())
+    stupid.runModel(train_load, test_load, device)

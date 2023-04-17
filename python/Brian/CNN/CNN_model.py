@@ -7,26 +7,26 @@ from dataset import userData
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 
-batch_size = 50
+"""batch_size = 50
 num_classes = 26
 learning_rate = 0.001
 num_epochs = 20
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu') 
 
-train_dataset = userData('C:\\Users\\OEM\\Downloads\\archive\sign_mnist_train\\sign_mnist_train.csv',
+train_dataset = userData('C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_train.csv',
                          transform=transforms.Compose([transforms.ToTensor(),
                                                         transforms.Resize((32,32)),
                                                         transforms.Normalize(mean = (0.1306,), std = (0.3082,))]))
 
-test_dataset = userData('C:\\Users\\OEM\\Downloads\\archive\sign_mnist_test\\sign_mnist_test.csv',
+test_dataset = userData('C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_test.csv',
                          transform=transforms.Compose([transforms.ToTensor(),
                                                         transforms.Resize((32,32)),
                                                         transforms.Normalize(mean = (0.1306,), std = (0.3082,))]))
 
 train_loader = DataLoader(dataset = train_dataset, batch_size = batch_size, shuffle = True)
 test_loader = DataLoader(dataset = test_dataset, batch_size = batch_size, shuffle = False) 
-#will add a parameter for the csv file directory
+#will add a parameter for the csv file directory"""
 
 class CNN(nn.Module):
 
@@ -37,15 +37,15 @@ class CNN(nn.Module):
         #oiriginal image is 32 x 32
         self.c1 = nn.Conv2d(in_channels = 1, out_channels = 32, kernel_size = 3) #image becomes 30 x 30
         self.c2 = nn.Conv2d(in_channels= 32, out_channels = 32, kernel_size = 3) #image becomes 28 x 28 but with 32 channels???
-        self.max_pool1 = nn.MaxPool2d(kernel_size = 2, stride = 2) #image 28 x 28
+        self.max_pool1 = nn.MaxPool2d(kernel_size = 2, stride = 2) #image 14 x 14
         #kernal_size = a n x m amount of pixels used to create a pixel for the filtered image. Basically the amount use to filer an image
         #Stride = amount of pixels moved to the right from the starting position of the kernal
 
-        self.c3 = nn.Conv2d(in_channels = 32, out_channels = 64, kernel_size = 3) # image becomes 26 x 26
-        self.c4 = nn.Conv2d(in_channels= 64, out_channels= 64, kernel_size = 3) #image becomes 24 x 24
-        self.max_pool2 = nn.MaxPool2d(kernel_size = 2, stride = 2) # image becomes 24 x 24
+        self.c3 = nn.Conv2d(in_channels = 32, out_channels = 64, kernel_size = 3) # image becomes 12 x 12
+        self.c4 = nn.Conv2d(in_channels= 64, out_channels= 64, kernel_size = 3) #image becomes 10 x 10
+        self.max_pool2 = nn.MaxPool2d(kernel_size = 2, stride = 2) # image becomes 5 x 5
         
-        self.fc1 = nn.Linear(1600, 128) #first value seems to be final number of channels * final image size
+        self.fc1 = nn.Linear(1600, 128) #first value seems to be total number of pixels of final image. Calculated by final number of channels * final image size 
         self.relu1 = nn.ReLU()
         self.fc2 = nn.Linear(128, num_classes)
 
@@ -64,7 +64,7 @@ class CNN(nn.Module):
         out = self.fc2(out)
         return out
     
-model = CNN(num_classes)
+"""model = CNN(num_classes)
 
 criterion = nn.CrossEntropyLoss()
 
@@ -80,7 +80,7 @@ optimizer = torch.optim.SGD(model.parameters(), lr = learning_rate, weight_decay
 #loaded_model.eval()
 
 #for param in model.parameters():
-    #print(param.size())
+#    print(param.size())
 #====Apparently lazy method of saving models===
 #FILE = "modelV1.pth"
 #torch.save(model, FILE)
@@ -121,4 +121,4 @@ with torch.no_grad():
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
 
-    print('Accuracy of the network on the {} train images: {} %'.format(27455, 100*correct/total))
+    print('Accuracy of the network on the {} train images: {} %'.format(27455, 100*correct/total)) """

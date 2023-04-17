@@ -1,25 +1,22 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QProgressBar
-from PyQt5.QtCore import QBasicTimer
+from PyQt5 import QtCore
 #from CNN_model import initParam
 #from CNN_model import num_epochs
 
 
-class MyApp(QWidget.QMainWindow):
+class MyApp(QWidget):
 
     def __init__(self):
         super().__init__()
         self.initUI()
-
+        self.thread = ThreadClass()
+        self.thread.progress.connect(self.updateProgress)
 
     def initUI(self):
         #setting up the dimensions of progress bar
         self.pbar = QProgressBar(self)
         self.pbar.setGeometry(30, 40, 200, 25)
-
-        #self.btn = QPushButton('Start', self)
-        #self.btn.move(40, 80)
-        #self.btn.clicked.connect(self.doAction)
 
         self.step = 0                         # init timer as 0
 
@@ -27,17 +24,17 @@ class MyApp(QWidget.QMainWindow):
         self.setGeometry(300, 300, 300, 200)
         self.show()
 
-        #self.step = epoch + 1
-        self.pbar.setValue(self.step)           # update the progress bar
+        #self.pbar.setValue(self.step)           # update the progress bar
 
-    #def doAction(self):
-    #    if self.timer.isActive():
-    #        self.timer.stop()
-     #       self.btn.setText('Start')
-     #   else:
-     #       self.timer.start(100, self)
-     #       self.btn.setText('Stop')
+    def updateProgress(self, progress):
+        self.pbar.setValue(progress)
+        
 
+class ThreadClass(QtCore.QThread):
+    progress = QtCore.Signal(object)
+
+    def __init__(self, parent = None):
+        super(ThreadClass, self).__init__()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

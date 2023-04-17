@@ -79,6 +79,7 @@ class MainWindow(QWidget):
         self.camera_thread._run_flag = False
         self.webcam_label.clear()
         self.camera_thread.stop()
+        self.destroy()
 
     def on_take_photo_button_clicked(self):
         ret, cv_img = self.camera_thread.cap.read()

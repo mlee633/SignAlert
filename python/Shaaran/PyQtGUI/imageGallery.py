@@ -1,21 +1,25 @@
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
+from PyQt5.QtCore import*
 import numpy as np
 from PIL import Image, ImageQt
 
-class MainWindow(QWidget):
+class imageViewer(QMainWindow):
     def __init__(self,Dataset,filter):
-        self.labelLetters = {'A':0,'B':1,'C':2,'D':3,'E':4,'F':5,'G':6,'H':7,'I':8,'K':10,'L':11,'M':12,'N':13,'O':14,'P':15,'Q':16,'R':17,'S':18,'T':19,'U':20,'V':21,'W':22,'X':23,'Y':24}
         super().__init__()
-        self.setWindowTitle('Images from dataset')
-        self.setGeometry(400, 400, 400, 800)
-
-        formLayout = QFormLayout()
-        groupBox = QGroupBox()
-        data = np.genfromtxt(Dataset, delimiter=',')[1:, :] #Remove first row (pixel numbers)
+        self.labelLetters = {'A':0,'B':1,'C':2,'D':3,'E':4,'F':5,'G':6,'H':7,'I':8,'K':10,'L':11,'M':12,'N':13,'O':14,'P':15,'Q':16,'R':17,'S':18,'T':19,'U':20,'V':21,'W':22,'X':23,'Y':24}
+        self.dataset = Dataset
+        self.filter = filter
+        self.initUI()
+       
+    def initUI(self):
+        self.scroll = QScrollArea()             # Scroll Area which contains the widgets, set as the centralWidget
+        self.widget = QWidget()                 # Widget that contains the collection of Vertical Box
+        self.vbox = QVBoxLayout()  
+        data = np.genfromtxt(self.dataset, delimiter=',')[1:, :] #Remove first row (pixel numbers)
         imageLabels = data[:,0]
-        if filter == None:
+        if self.filter == None:
             i=0
             for label in imageLabels:
                 label1 = QLabel(self.labelLetters.get(label))
@@ -25,31 +29,48 @@ class MainWindow(QWidget):
                 im = Image.fromarray(image)
                 im = im.convert("L")
                 im = ImageQt.ImageQt(im)
-                label2.setPixmap(QPixmap.fromImage(im))
-                formLayout.addRow(label1, label2)
+                pixmap = QPixmap.fromImage(im)
+                pixmap = pixmap.scaledToHeight(280)
+                pixmap = pixmap.scaledToWidth(280)
+                label2.setPixmap(pixmap)
+                self.vbox.addWidget(label1)
+                self.vbox.addWidget(label2)
                 i+=1
+        else:
+            i = 0
+            for label in imageLabels:
+                if label== self.labelLetters.get(label):
+                    label1 = QLabel(self.labelLetters.get(label))
+                    label2 = QLabel()
+                    image = data[i,1:]
+                    image = image.reshape(28,28)
+                    im = Image.fromarray(image)
+                    im.resize(280,280)
+                    im = im.convert("L")
+                    im = ImageQt.ImageQt(im)
+                    pixmap = QPixmap.fromImage(im)
+                    label2.setPixmap(pixmap)
+                    self.vbox.addWidget(label1)
+                    self.vbox.addWidget(label2)
+                i+=1        
            
-        # for n in range(100):
-        #     label1 = QLabel('Slime_%2d' % n)
-        #     label2 = QLabel()
-        #     label2.setPixmap(QPixmap('s1.png'))
-        #     formLayout.addRow(label1, label2)
 
-        groupBox.setLayout(formLayout)
-
-        scroll = QScrollArea()
-        scroll.setWidget(groupBox)
-        scroll.setWidgetResizable(True)
-
-        layout = QVBoxLayout(self)
-        layout.addWidget(scroll)
+        self.widget.setLayout(self.vbox)
+        #Scroll Area Properties
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setWidget(self.widget)
+        self.setCentralWidget(self.scroll)
+        self.setGeometry(600, 100, 1000, 900)
+        self.setWindowTitle('Scroll Area Demonstration')
+        self.show()
 
 
 if __name__ == '__main__':
-    app = QApplication([])
-    window = MainWindow('/Users/shaaranelango/Downloads/project-1-python-team_16/dataset/sign_mnist_train.csv',None)
-    window.show()
-    sys.exit(app.exec())
+    app = QApplication(sys.argv)
+    main = imageViewer('/Users/shaaranelango/Downloads/project-1-python-team_16/dataset/sign_mnist_train.csv',None)
+    sys.exit(app.exec_())
 # import sys
 # from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QComboBox, QHBoxLayout, QVBoxLayout, QScrollArea, QWidget
 # from PyQt5.QtGui import QPixmap

@@ -38,8 +38,9 @@ class Test_Train:
         app = QApplication(sys.argv)
         gui = MyApp()
 
-        for param in model.parameters():
-            print(param.size())
+        
+        #for param in model.parameters():
+            #print(param.size())
 
 
         for epoch in range(self.num_epochs):
@@ -76,7 +77,7 @@ class Test_Train:
                 correct += (predicted == labels).sum().item()
 
             print('Accuracy of the network on the {} train images: {} %'.format(27455, 100*correct/total)) 
-        sys.exit(app.exec_())
+
 
 if __name__ == '__main__':
     stupid = Test_Train(50, 26, 0.001, 20)

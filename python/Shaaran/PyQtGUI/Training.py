@@ -1,16 +1,16 @@
 import torch
 from torch.utils.data import DataLoader
-from dataset import userData
+import userDataset
 import torchvision.transforms as transforms
 import numpy as np
 import torch.nn as nn
 from CNN_model import CNN
-from GUI_loading import MyApp
+
 from PyQt5.QtWidgets import QApplication
 import sys
-from Isaac.PyGUI.AlexNet import AlexNet
-from Shaaran.LeNetModel import LeNet5
-from Shaaran.PyQtGUI.progressBar import PBar
+#from AlexNet import AlexNet
+from LeNetModel import LeNet5
+from progressBar import PBar
 
 class Test_Train:
     def __init__(self, batch_size, num_classes, learning_rate, num_epochs):
@@ -23,11 +23,11 @@ class Test_Train:
 
     def setting_up(self, file_location_train, file_location_test):
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        train_dataset = userData(file_location_train,
+        train_dataset = userDataset.userData(file_location_train,
                          transform=transforms.Compose([transforms.ToTensor(),
                                                         transforms.Resize((32,32)),
                                                         transforms.Normalize(mean = (0.1306,), std = (0.3082,))]))
-        test_dataset = userData(file_location_test,
+        test_dataset = userDataset.userData(file_location_test,
                          transform=transforms.Compose([transforms.ToTensor(),
                                                         transforms.Resize((32,32)),
                                                         transforms.Normalize(mean = (0.1306,), std = (0.3082,))]))
@@ -43,8 +43,8 @@ class Test_Train:
             model = CNN(self.num_classes).to(device)
         elif modelType == 'LeNet5':
             model = LeNet5(self.num_classes).to(device)
-        else:
-            model = AlexNet(self.num_classes).to(device)
+        # else:
+        #     model = AlexNet(self.num_classes).to(device)
 
 
         criterion = nn.CrossEntropyLoss()
@@ -71,7 +71,7 @@ class Test_Train:
                 loss.backward()
                 optimizer.step()
                 counter += 1
-                self.progressBar.changeValue(int(counter / (self.num_epochs * self.batch_size)))
+                self.progressBar.changeValue(int(100 * counter / (self.num_epochs * len(train_loader))))
                 
 
             print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, self.num_epochs, loss.item()))

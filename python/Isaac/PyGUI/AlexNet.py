@@ -6,17 +6,14 @@ import torch.nn as nn
 from torchvision import datasets
 from torchvision import transforms
 from torch.utils.data.sampler import SubsetRandomSampler
+from userDataset import userData
  
 # Device configuration
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
  
-# load pretrained network
-# replace final layers
-# train network
-# predict and assess network accuracy
-# deploy results    
+
  
-def get_train_valid_loader(data_dir,
+def get_train_valid_loader(train_dataset,
                            batch_size,
                            augment,
                            random_seed,
@@ -55,15 +52,9 @@ def get_train_valid_loader(data_dir,
         ])
  
             # load the dataset
-    train_dataset = datasets.CIFAR10(
-        root=data_dir, train=True,
-        download=True, transform=train_transform,
-    )
+    train_dataset = userData(train_dataset, train_transform)
  
-    valid_dataset = datasets.CIFAR10(
-        root=data_dir, train=True,
-        download=True, transform=valid_transforms,
-    )
+    valid_dataset = userData(train_dataset, train_transform)
  
     num_train = len(train_dataset)
     indices = list(range(num_train))
@@ -113,13 +104,9 @@ def get_test_loader(data_dir,
  
  
 # MNIST dataset 
-train_loader, valid_loader = get_train_valid_loader(data_dir = './data', 
-                                                    batch_size = 64,
-                                                    augment = False, 
-                                                    random_seed = 1)
+train_loader, valid_loader = get_train_valid_loader('C:\\Users\\healt\\OneDrive\\문서\\GitHub\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', batch_size = 64, augment = False, random_seed = False)
  
-test_loader = get_test_loader(data_dir = './data',
-                              batch_size = 64)
+test_loader = get_test_loader('C:\\Users\\healt\\OneDrive\\문서\\GitHub\\project-1-python-team_16\\dataset\\sign_mnist_test.csv', batch_size = 64 )
  
 class AlexNet(nn.Module):  
     def __init__(self, num_classes=10):
@@ -187,14 +174,15 @@ total_step = len(train_loader)
 for epoch in range(num_epochs):
     for i, (images, labels) in enumerate(train_loader):  
         # Move tensors to the configured device
+        labels = labels.T
+        labels = np.ravel(labels)
+        labels = torch.from_numpy(labels)
         images = images.to(device)
         labels = labels.to(device)
- 
-        # Forward pass
-        outputs = model(images)
+
+        outputs = model(images) 
         loss = criterion(outputs, labels)
- 
-        # Backward and optimize
+
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()

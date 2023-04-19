@@ -1,4 +1,5 @@
 import sys
+import string
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import*
@@ -34,18 +35,19 @@ class imageViewer(QMainWindow):
         imageLabels = data[:,0]
         # Label isn't needed right now
         for label, image in zip(imageLabels, data[:,1:]):
-            image = image.reshape(28, 28)
-            im = Image.fromarray(image)
-            im = im.convert("L")
-            im = ImageQt.ImageQt(im)
-            pixmap = QPixmap.fromImage(im)
-            pixmap = pixmap.scaled(140, 140)
-            self.model.images.append(pixmap)
-            self.model.layoutChanged.emit()
+            if (not self.filter) or (self.labelLetters.get(self.filter) == label):
+                image = image.reshape(28, 28)
+                im = Image.fromarray(image)
+                im = im.convert("L")
+                im = ImageQt.ImageQt(im)
+                pixmap = QPixmap.fromImage(im)
+                pixmap = pixmap.scaled(140, 140)
+                self.model.images.append(pixmap)
+                self.model.layoutChanged.emit()
         self.setCentralWidget(self.listview)
         self.setWindowTitle('Dataset Image Viewer')
         self.centre()
-        self.show()
+        #self.show()
     def centre(self):
         self.setGeometry(0,0,770,800)
         qtRectangle = self.frameGeometry()
@@ -54,5 +56,5 @@ class imageViewer(QMainWindow):
         self.move(qtRectangle.topLeft())
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    main = imageViewer('/Users/shaaranelango/Downloads/project-1-python-team_16/dataset/sign_mnist_train.csv',None)
+    main = imageViewer('/Users/shaaranelango/Downloads/project-1-python-team_16/dataset/sign_mnist_train.csv','A')
     sys.exit(app.exec_())

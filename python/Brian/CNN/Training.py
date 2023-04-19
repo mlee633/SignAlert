@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QApplication
 import sys
 #from Isaac.PyGUI.AlexNet import AlexNet
 from LeNet5Model import LeNet5
-from PIL import Image
+import cv2
 #from python.Shaaran.PyQtGUI.progressBar import PBar
 
 class Test_Train:
@@ -117,7 +117,7 @@ class Test_Train:
           
 #For testing purposes when running on this file
 if __name__ == '__main__':
-    #app = QApplication(sys.argv)
+    app = QApplication(sys.argv)
     stupid = Test_Train(50, 26, 0.001, 20)
     device, train_dataset, test_dataset = stupid.setting_up('C:\\Users\\OEM\\Downloads\\archive\\sign_mnist_train\\sign_mnist_train.csv', 'C:\\Users\\OEM\\Downloads\\archive\\sign_mnist_test\\sign_mnist_test.csv', )
     #train_load, test_load = stupid.loading_up(train_dataset, test_dataset)
@@ -126,8 +126,24 @@ if __name__ == '__main__':
     #stupid.saving_model(model, filename + ".pth")
     loaded_model = stupid.load_model("model1.pth", "CNN", device)
     loaded_model.eval()
-    #input_image = Image.open(image_file_name)
-    #with torch.no_grad():
+    input_image = cv2.imread('C:\\Users\\OEM\\Documents\\project-1-python-team_16\\python\\Brian\\CNN\\WIN_20230420_01_04_07_Pro.jpg')
+    input_image_gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
+    print(input_image_gray)
+    processingImg = transforms.Compose([transforms.ToTensor(),
+                                                        transforms.Resize((32,32)),
+                                                        transforms.Normalize(mean = (0.1306,), std = (0.3082,))])
+    input_tensor = processingImg(input_image_gray)
+    input_batch = input_tensor.unsqueeze(0)
+    #print(len(input_batch))
+    if torch.cuda.is_available():
+        input_batch = input_batch.to('cuda')
+        loaded_model.to('cuda')
+    
+    with torch.no_grad():
+        output = loaded_model(input_batch)
+
+    probabilities = torch.nn.functional.softmax(output[0], dim = 0)
+    print(probabilities)
 
 
  #All stuff underneath is just the required file directory for testing on different devices. 

@@ -92,7 +92,7 @@ class Test_Train:
                     total += labels.size(0)
                     correct += (predicted == labels).sum().item()
 
-            #Displays this onto the textbox that is located above the progress bar
+            #Displays this onto the textbox that is located above the progress bar. Also seems like number of train images are len(train_loader)
             self.progressBar.tb.append('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, self.num_epochs, loss.item()))
             self.progressBar.tb.append('Accuracy of the network on the {} train images: {:.2f} % \n'.format(27455, 100*correct/total))
         return model
@@ -119,16 +119,16 @@ class Test_Train:
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     stupid = Test_Train(50, 26, 0.001, 20)
-    device, train_dataset, test_dataset = stupid.setting_up('C:\\Users\\OEM\\Downloads\\archive\\sign_mnist_train\\sign_mnist_train.csv', 'C:\\Users\\OEM\\Downloads\\archive\\sign_mnist_test\\sign_mnist_test.csv', )
+    device, train_dataset, test_dataset = stupid.setting_up('C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', 'C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_train.csv' )
     #train_load, test_load = stupid.loading_up(train_dataset, test_dataset)
     #model = stupid.runModel(train_load, test_load, device, "CNN")
-    #filename = "model1"
+    filename = "properModelV1"
     #stupid.saving_model(model, filename + ".pth")
-    loaded_model = stupid.load_model("model1.pth", "CNN", device)
+    loaded_model = stupid.load_model("properModelV1.pth", "CNN", device)
     loaded_model.eval()
-    input_image = cv2.imread('C:\\Users\\OEM\\Documents\\project-1-python-team_16\\python\\Brian\\CNN\\WIN_20230420_01_04_07_Pro.jpg')
+    input_image = cv2.imread('C:\\Users\\brian\\Documents\\project-1-python-team_16\\python\\Brian\\CNN\\WIN_20230420_01_04_07_Pro.jpg')
     input_image_gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
-    print(input_image_gray)
+    #print(input_image_gray)
     processingImg = transforms.Compose([transforms.ToTensor(),
                                                         transforms.Resize((32,32)),
                                                         transforms.Normalize(mean = (0.1306,), std = (0.3082,))])
@@ -142,7 +142,9 @@ if __name__ == '__main__':
     with torch.no_grad():
         output = loaded_model(input_batch)
 
+    print(output)
     probabilities = torch.nn.functional.softmax(output[0], dim = 0)
+    probabilities = np.argmax(probabilities)
     print(probabilities)
 
 
@@ -151,3 +153,5 @@ if __name__ == '__main__':
     #'C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_test.csv'
     #'C:\\Users\\OEM\\Downloads\\archive\sign_mnist_train\\sign_mnist_train.csv'
     #'C:\\Users\\OEM\\Downloads\\archive\sign_mnist_test\\sign_mnist_test.csv')
+    #C:\\Users\\OEM\\Documents\\project-1-python-team_16\\python\\Brian\\CNN\\WIN_20230420_01_04_07_Pro.jpg
+    #'C:\\Users\\brian\\Documents\\project-1-python-team_16\\python\\Brian\\CNN\\WIN_20230420_01_04_07_Pro.jpg'

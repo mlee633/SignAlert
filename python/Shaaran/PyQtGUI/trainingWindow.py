@@ -1,16 +1,17 @@
 import sys
-import test
-import numpy
+import imageGallery
+import string
 from PyQt5.QtWidgets import*
 from PyQt5.QtCore import*
 
-nameFile = "None Selected"
+
 
 class trainWindow(QWidget):
     
     def __init__(self):
+        self.nameFile = "None Selected"
         super().__init__()
-        self.label1 = QLabel(str(nameFile), self)
+        self.label1 = QLabel(str(self.nameFile), self)
         self.sliderText = QLabel()
         self.slider = QSlider(Qt.Horizontal, self)
         self.initUI()
@@ -116,21 +117,35 @@ class trainWindow(QWidget):
         # different push buttons
         startTrainButton = QPushButton('Train Model using selected dataset')
         viewImageButton = QPushButton('View images from dataset')
+        self.cb = QComboBox(self)
+        self.cb.addItem(None)
+        for letter in string.ascii_uppercase:
+            self.cb.addItem(letter)
+
+        hbox = QHBoxLayout()
+        hbox.addWidget(viewImageButton)
+        hbox.addWidget(self.cb)
+
         vbox = QVBoxLayout()
         vbox.addWidget(startTrainButton)
-        vbox.addWidget(viewImageButton)
         vbox.addStretch(1)
+        vbox.addLayout(hbox)
+        
         groupbox.setLayout(vbox)
-
+        viewImageButton.clicked.connect(self.openDatasetViewer)
         return groupbox
     def buttonClick(self):
-        nameFile= QFileDialog.getOpenFileName(self,"Open training dataset",r"<Default dir>", "CSV (*.csv);;All Files (*)")
-        self.label1.setText("Directory: \n" + nameFile[0])
+        self.nameFile= QFileDialog.getOpenFileName(self,"Open training dataset",r"<Default dir>", "CSV (*.csv);;All Files (*)")[0]
+        self.label1.setText("Directory: \n" + self.nameFile)
         self.label1.adjustSize()       # adjust the label size automatically
         self.trainGroupBox.setEnabled(True)
     def sliderChange(self):
         self.sliderText.setText('Train/Validation ratio: ' + str(self.slider.value()) + '/' + str(100-self.slider.value()))
         self.sliderText.adjustSize()
+    def openDatasetViewer(self):
+        print(self.cb.currentText())
+        self.w = imageGallery.imageViewer(str(self.nameFile),(self.cb.currentText()))
+        self.w.show()
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = trainWindow()

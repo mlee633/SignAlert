@@ -20,7 +20,6 @@ class Test_Train:
         self.num_epochs = num_epochs
         self.progressBar = MyApp() #PBar()
 
-
     def setting_up(self, file_location_train, file_location_test):
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         train_dataset = userData(file_location_train,
@@ -48,16 +47,16 @@ class Test_Train:
         #else:
         #    model = AlexNet(self.num_classes).to(device)
 
-
         criterion = nn.CrossEntropyLoss()
-
         optimizer = torch.optim.SGD(model.parameters(), lr = self.learning_rate, weight_decay = 0.005, momentum = 0.9)
 
         #for param in model.parameters():
             #print(param.size())
+
+        #Training along with accuracy of model
         counter = 0
         for epoch in range(self.num_epochs):
-            for i, (images, labels) in enumerate(train_loader): #tqdm(enumerate(train_loader), total = len(train_loader), leave = False):
+            for _, (images, labels) in enumerate(train_loader): #tqdm(enumerate(train_loader), total = len(train_loader), leave = False):
                 if self.progressBar.action == True:
                     labels = labels.T
                     labels = np.ravel(labels)
@@ -74,31 +73,28 @@ class Test_Train:
                     counter += 1
                     self.progressBar.updateProgress(int(100 *counter / (self.num_epochs * len(train_loader))))
                 else:
-                    return
-                    #break
-            #if self.progressBar.action == False:
-            #    break
-            #else:
-            print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, self.num_epochs, loss.item()))
-        
+                    return #Stops training when button is clicked on gui
+                
+            #Calculates the accuracy of the model for every epoch loop
+            with torch.no_grad():
+                correct = 0
+                total = 0    
+                for images, labels in test_loader:
+                    labels = labels.T
+                    labels = np.ravel(labels)
+                    labels = torch.from_numpy(labels)
+                    images = images.to(device)
+                    labels = labels.to(device)
+                    outputs = model(images)
+                    _, predicted = torch.max(outputs.data, 1)
+                    total += labels.size(0)
+                    correct += (predicted == labels).sum().item()
 
-        with torch.no_grad():
-            correct = 0
-            total = 0    
-            for images, labels in test_loader:
-                labels = labels.T
-                labels = np.ravel(labels)
-                labels = torch.from_numpy(labels)
-                images = images.to(device)
-                labels = labels.to(device)
-                outputs = model(images)
-                _, predicted = torch.max(outputs.data, 1)
-                total += labels.size(0)
-                correct += (predicted == labels).sum().item()
-
-            print('Accuracy of the network on the {} train images: {} %'.format(27455, 100*correct/total)) 
-
-
+            #Displays this onto the textbox that is located above the progress bar
+            self.progressBar.tb.append('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, self.num_epochs, loss.item()))
+            self.progressBar.tb.append('Accuracy of the network on the {} train images: {:.2f} % \n'.format(27455, 100*correct/total))
+          
+#For testing purposes when running on this file
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     stupid = Test_Train(50, 26, 0.001, 20)

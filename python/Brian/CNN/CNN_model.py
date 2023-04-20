@@ -1,6 +1,6 @@
 
 import torch.nn as nn
-from tqdm import tqdm #for progress bar on console
+#from tqdm import tqdm #for progress bar on console
 import torch
 import numpy as np
 from dataset import userData

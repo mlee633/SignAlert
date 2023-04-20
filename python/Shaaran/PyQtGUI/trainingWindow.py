@@ -74,7 +74,7 @@ class trainWindow(QWidget):
     def createParameters(self):
         groupbox = QGroupBox('Change Hyperparameters')
         epochBox = QSpinBox()
-        epochBox.setRange(5,20)
+        epochBox.setRange(5,30)
         epochLabel = QLabel("Number of epochs (5 - 20 range)")
         epochHbox = QHBoxLayout()
         epochHbox.addWidget(epochLabel)
@@ -143,7 +143,7 @@ class trainWindow(QWidget):
         self.sliderText.setText('Train/Validation ratio: ' + str(self.slider.value()) + '/' + str(100-self.slider.value()))
         self.sliderText.adjustSize()
     def openDatasetViewer(self):
-        print(self.cb.currentText())
+    
         self.w = imageGallery.imageViewer(str(self.nameFile),(self.cb.currentText()))
         self.w.show()
 if __name__ == '__main__':

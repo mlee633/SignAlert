@@ -101,8 +101,8 @@ def get_test_loader(data_dir,
     )
  
     return data_loader
- 
- 
+
+
 # MNIST dataset 
 train_loader, valid_loader = get_train_valid_loader('C:\\Users\\healt\\OneDrive\\문서\\GitHub\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', batch_size = 64, augment = False, random_seed = False)
  

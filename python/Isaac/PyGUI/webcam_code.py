@@ -172,15 +172,20 @@ class MainWindow(QWidget):
             # Crop the image to the specified dimensions
             cropped_img = cv_img[100:380, 200:430]
 
-            # Convert the cropped image to a Qt format images
-            qt_img = self.camera_thread.convert_cv_qt(cropped_img)
+            # Convert the cropped image to grayscale
+            gray_img = cv2.cvtColor(cropped_img, cv2.COLOR_BGR2GRAY)
 
-            # Update the label pixmap with the cropped image
+            # Resize the grayscale image to (32,32)
+            resized_img = cv2.resize(gray_img, (32, 32))
+
+            # Convert the resized image to a Qt format image
+            qt_img = self.camera_thread.convert_cv_qt(resized_img)
+
+            # Update the label pixmap with the resized image
             self.update_image(qt_img)
 
-            # Save the cropped image
-            cv2.imwrite('SignAlertPhoto.jpg', cropped_img)
-
+            # Save the resized image
+            cv2.imwrite('SignAlertPhoto.jpg', resized_img)
 
     def closeEvent(self, event):
         if hasattr(self, 'camera_thread') and self.camera_thread.isRunning():

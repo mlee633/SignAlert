@@ -70,16 +70,17 @@ class Test_Train:
         self.progressBar = MyApp() #PBar()
 
     #num_split only in range from 0 to 1
-    def setting_up(self, file_location_train, num_split):
+    def setting_up(self, filename, num_split):
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        
-        train_dataset = userData(file_location_train, num_split, transforms = None)
-        train_size = int(num_split * len(train_dataset))
-        valid_size = len(train_dataset) - train_size
-        train_dataset, valid_dataset = torch.utils.data.random_split(train_dataset, [train_size, valid_size])
-        train_data = 
-        valid_dataset = userData(,
-                         transform=transforms.Compose([transforms.ToTensor(),
+        split = num_split/100
+        xy = np.genfromtxt(filename, delimiter = ",", dtype = np.uint8)[1:,:]
+        print(xy.shape[0])
+        train_dataset = xy[(int(split*xy.shape[0])),:] #numpy array
+        valid_dataset = xy[(int((1-split)*xy.shape[0])),:]
+        train_dataset = userData(train_dataset, transform=transforms.Compose([transforms.ToTensor(), transforms.RandomRotation(30),
+                                                        transforms.Resize((32,32)),
+                                                        transforms.Normalize(mean = (0.1306,), std = (0.3082,))]))
+        valid_dataset = userData(valid_dataset, transform=transforms.Compose([transforms.ToTensor(),
                                                         transforms.Resize((32,32)),
                                                         transforms.Normalize(mean = (0.1306,), std = (0.3082,))]))
         return device, train_dataset, valid_dataset 
@@ -197,7 +198,7 @@ class Test_Train:
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     stupid = Test_Train(55, 26, 0.001, 20)
-    device, train_dataset, test_dataset = stupid.setting_up('C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', 'C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_test.csv' )
+    device, train_dataset, test_dataset = stupid.setting_up('C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', 50)
     train_load, test_load = stupid.loading_up(train_dataset, test_dataset)
     model = stupid.runModel(train_load, test_load, device, "CNN")
     filename = "CNNV1"

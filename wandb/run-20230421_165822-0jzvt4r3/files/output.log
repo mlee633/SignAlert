@@ -1,0 +1,8 @@
+
+27455
+Traceback (most recent call last):
+  File "c:/Users/brian/Documents/project-1-python-team_16/python/Brian/CNN/Training.py", line 201, in <module>
+    device, train_dataset, test_dataset = stupid.setting_up('C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', 50)
+  File "c:/Users/brian/Documents/project-1-python-team_16/python/Brian/CNN/Training.py", line 78, in setting_up
+    train_dataset = xy[:(split*xy.shape[0]),:] #numpy array
+TypeError: slice indices must be integers or None or have an __index__ method

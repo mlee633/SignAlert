@@ -1,0 +1,10 @@
+
+27455
+Traceback (most recent call last):
+  File "c:/Users/brian/Documents/project-1-python-team_16/python/Brian/CNN/Training.py", line 201, in <module>
+    device, train_dataset, test_dataset = stupid.setting_up('C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', 50)
+  File "c:/Users/brian/Documents/project-1-python-team_16/python/Brian/CNN/Training.py", line 80, in setting_up
+    train_dataset = userData(train_dataset, transform=transforms.Compose([transforms.ToTensor(), transforms.RandomRotation(30),
+  File "c:\Users\brian\Documents\project-1-python-team_16\python\Brian\CNN\dataset.py", line 9, in __init__
+    self.x = array[:, 1:]
+IndexError: too many indices for array: array is 1-dimensional, but 2 were indexed

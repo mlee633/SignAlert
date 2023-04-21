@@ -4,13 +4,10 @@ from PIL import Image
 import math
 
 class userData(Dataset):
-    def __init__(self, file, num_split, transform =None):
+    def __init__(self, array, transform =None):
         # data loading
-        num_split = num_split/100
-        xy = np.genfromtxt(file, delimiter=",", dtype=np.uint8)[1:, :]
-        self.x = (xy[:,1:])
-        self.y = (xy[:,[0]]) 
-        self.n_samples = xy.shape[0]
+        self.x = array[:, 1:]
+        self.y = array[:, [0]]
         self.transform = transform
     def __getitem__(self,index):
         #first_image = self.x[index].reshape((28, 28))

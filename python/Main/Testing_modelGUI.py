@@ -22,9 +22,10 @@ class TestingModelGUI(QMainWindow):
     def initUI(self):
         self.setWindowTitle('SignAlert')
         self.setWindowIcon(QIcon(dir_path+'/signalertlogo.png'))
+        self.setGeometry(300, 300, 600, 450)
 
         # Create the "Choose Model" button
-        self.choose_model_button = QPushButton("Choose Model", self)
+        self.choose_model_button = QPushButton("Choose Trained Model", self)
         self.choose_model_button.clicked.connect(self.show_model_options)
 
         # Create the "Choose Images" button
@@ -116,6 +117,5 @@ class TestingModelGUI(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     main_gui = TestingModelGUI()
-    main_gui.setGeometry(300, 300, 600, 450)
     main_gui.show()
     sys.exit(app.exec_())

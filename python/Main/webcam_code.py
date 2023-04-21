@@ -88,7 +88,7 @@ class MainWindow(QWidget):
         self.camera_thread.stop()
         self.camera_thread.cap.release()
         cv2.destroyAllWindows()
-        self.destroy()
+        self.close()
 
         # centre of webcam
     def update_image(self, qt_img):

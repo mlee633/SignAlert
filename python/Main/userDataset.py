@@ -5,12 +5,11 @@ from PIL import Image
 import math
 
 class userData(Dataset):
-    def __init__(self, file,transform =None):
+    def __init__(self, numpy_array,transform =None):
         # data loading
-        xy = np.genfromtxt(file, delimiter=",", dtype=np.uint8)[1:, :]
-        self.x = (xy[:,1:])
-        self.y = (xy[:,[0]]) 
-        self.n_samples = xy.shape[0]
+        self.x = (numpy_array[:,1:])
+        self.y = (numpy_array[:,[0]]) 
+        self.n_samples = numpy_array.shape[0]
         self.transform = transform
     def __getitem__(self,index):
         #first_image = self.x[index].reshape((28, 28))

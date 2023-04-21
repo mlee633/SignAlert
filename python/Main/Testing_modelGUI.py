@@ -1,4 +1,5 @@
 import sys
+import torch
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QTabWidget, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFileDialog
 from PyQt5.QtGui import QIcon
 from webcam_code import MainWindow
@@ -37,6 +38,7 @@ class TestingModelGUI(QMainWindow):
 
         # Create the "Test Selected Images" button
         self.test_images_button = QPushButton("Test Selected Images", self)
+        self.test_images_button.clicked.connect(self.openTesting)
 
         # Create the layout for the main window
         self.main_layout = QVBoxLayout()
@@ -56,6 +58,8 @@ class TestingModelGUI(QMainWindow):
 
         # Keep a reference to the tab widget
         self.tab_widget = None
+    def openTraining(self):
+        model = torch.load(self.nameFile)
 
     def show_model_options(self):
         # Create a new tab widget

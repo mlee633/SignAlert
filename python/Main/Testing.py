@@ -101,7 +101,7 @@ class TestResults(QWidget):
         self.newImageButton.clicked.connect(self.startTest)
         self.setWindowTitle('QTextBrowser')
         self.setGeometry(300, 300, 800, 550)
-        self.show()
+        #self.show()
 
     def clear_text(self):
         self.tb.clear()

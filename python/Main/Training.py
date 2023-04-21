@@ -33,24 +33,30 @@ class Test_Train:
         self.num_epochs = num_epochs
         self.progressBar = MyApp() #PBar()
 
-    def setting_up(self, file_location_train, file_location_test):
+    #num_split in percentage. 
+    def setting_up(self, file_location_train, num_split):
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        train_dataset = userData(file_location_train,
-                         transform=transforms.Compose([transforms.ToTensor(), transforms.RandomRotation(30),
-                                                        
-                                                        transforms.Resize((32,32)),
-                                                        transforms.Normalize(mean = (0.1346,), std = (0.3582,))]))
-        test_dataset = userData(file_location_test,
-                         transform=transforms.Compose([transforms.ToTensor(),
-                                                        transforms.Resize((32,32)),
-                                                        transforms.Normalize(mean = (0.1306,), std = (0.3082,))]))
-        return device, train_dataset, test_dataset 
+
+        split = num_split/100
+        xy = np.genfromtxt(file_location_train, delimiter = ",", dtype = np.uint8)[1:,:]
+
+        train_dataset = xy[:(int(split*xy.shape[0])), :]
+        valid_dataset = xy[(int(split*xy.shape[0])):, :]
+        train_dataset = userData(train_dataset, transform = transforms.Compose([transforms.ToTensor(), transforms.RandomRotation(30),
+                                                            transforms.Resize((32,32)),
+                                                            transforms.Normalize(mean = (0.1306,), std = (0.3082))]))
+        valid_dataset = userData(valid_dataset, transform = transforms.Compose([transforms.ToTensor(),
+                                                            transforms.Resize((32,32)),
+                                                            transforms.Normalize(mean = (0.1306,), std = (0.3082))]))
+
+        return device, train_dataset, valid_dataset 
     
-    def loading_up(self, train_dataset, test_dataset):
+    def loading_up(self, train_dataset, valid_dataset):
         train_loader = DataLoader(dataset = train_dataset, batch_size = self.batch_size, shuffle = True)
-        test_loader = DataLoader(dataset = test_dataset, batch_size = self.batch_size, shuffle = True) 
+        #not sure why test loader is still here if it ain't used at all
+        valid_loader = DataLoader(dataset = valid_dataset, batch_size = self.batch_size, shuffle = True) 
     
-        return train_loader, test_loader
+        return train_loader, valid_loader
     
     def runModel(self, train_loader, test_loader, device, modelType):
         #Remember to add in if statements to allow users to change models here. 
@@ -117,24 +123,6 @@ class Test_Train:
             self.progressBar.tb.append('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, self.num_epochs, loss.item()))
             self.progressBar.tb.append('Accuracy of the network on the {} train images: {:.2f} % \n'.format(27455, 100*correct/total))
         return model
-
-    def saving_model(self, trained_model, file_name):
-        #if the method does return something, will save the model
-        if trained_model is not None:
-            torch.save(trained_model.state_dict(), file_name )
-    
-    def load_model(self, filename, modelType, device):
-        if modelType == 'CNN':
-            loaded_model = CNN(self.num_classes).to(device)
-        elif modelType == 'LeNet5':
-            loaded_model = LeNet5(self.num_classes).to(device)
-        #else:
-        #    loaded_model = AlexNet(self.num_classes).to(device)
-
-        loaded_model.load_state_dict(torch.load(filename))
-        return loaded_model
-        #loaded_model.eval()
-
           
 #For testing purposes when running on this file
 if __name__ == '__main__':

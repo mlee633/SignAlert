@@ -138,7 +138,7 @@ class trainWindow(QWidget):
         startTrainButton.clicked.connect(self.trainButtonClicked)
         
         self.modelLineEdit.setPlaceholderText('model1')
-        self.modelLineEdit.setText('ModelName without .pth')
+        self.modelLineEdit.setText('Give a name of saved model')
         viewImageButton = QPushButton('View images from dataset')
 
         ## Creating the filter combobox, user can select between either All letters, or just one image shown

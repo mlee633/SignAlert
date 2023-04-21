@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "c:/Users/brian/Documents/project-1-python-team_16/python/Brian/CNN/Training.py", line 204, in <module>
+    model = stupid.runModel(train_load, test_load, device, "CNN")
+  File "c:/Users/brian/Documents/project-1-python-team_16/python/Brian/CNN/Training.py", line 116, in runModel
+    for i, (images, labels) in enumerate(train_loader): #tqdm(enumerate(train_loader), total = len(train_loader), leave = False):
+  File "C:\Users\brian\miniconda3\envs\py38\lib\site-packages\torch\utils\data\dataloader.py", line 634, in __next__
+    data = self._next_data()
+  File "C:\Users\brian\miniconda3\envs\py38\lib\site-packages\torch\utils\data\dataloader.py", line 677, in _next_data
+    index = self._next_index()  # may raise StopIteration
+  File "C:\Users\brian\miniconda3\envs\py38\lib\site-packages\torch\utils\data\dataloader.py", line 624, in _next_index
+    return next(self._sampler_iter)  # may raise StopIteration
+  File "C:\Users\brian\miniconda3\envs\py38\lib\site-packages\torch\utils\data\sampler.py", line 254, in __iter__
+    for idx in self.sampler:
+  File "C:\Users\brian\miniconda3\envs\py38\lib\site-packages\torch\utils\data\sampler.py", line 76, in __iter__
+    return iter(range(len(self.data_source)))
+TypeError: object of type 'userData' has no len()

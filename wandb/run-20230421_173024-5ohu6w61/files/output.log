@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "c:/Users/brian/Documents/project-1-python-team_16/python/Brian/CNN/Training.py", line 203, in <module>
+    train_load, test_load = stupid.loading_up(train_dataset, test_dataset)
+  File "c:/Users/brian/Documents/project-1-python-team_16/python/Brian/CNN/Training.py", line 90, in loading_up
+    train_loader = DataLoader(dataset = train_dataset, batch_size = self.batch_size, shuffle = True)
+  File "C:\Users\brian\miniconda3\envs\py38\lib\site-packages\torch\utils\data\dataloader.py", line 351, in __init__
+    sampler = RandomSampler(dataset, generator=generator)  # type: ignore[arg-type]
+  File "C:\Users\brian\miniconda3\envs\py38\lib\site-packages\torch\utils\data\sampler.py", line 106, in __init__
+    if not isinstance(self.num_samples, int) or self.num_samples <= 0:
+  File "C:\Users\brian\miniconda3\envs\py38\lib\site-packages\torch\utils\data\sampler.py", line 114, in num_samples
+    return len(self.data_source)
+  File "c:\Users\brian\Documents\project-1-python-team_16\python\Brian\CNN\dataset.py", line 22, in __len__
+    return self.n_samples
+AttributeError: 'userData' object has no attribute 'n_samples'

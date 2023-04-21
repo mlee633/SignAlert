@@ -74,9 +74,10 @@ class Test_Train:
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         split = num_split/100
         xy = np.genfromtxt(filename, delimiter = ",", dtype = np.uint8)[1:,:]
-        print(xy.shape[0])
-        train_dataset = xy[(int(split*xy.shape[0])),:] #numpy array
-        valid_dataset = xy[(int((1-split)*xy.shape[0])),:]
+        #Train grabs everything from 0 to the int(split blah blah blah). Valid gets values from at int blah blah to the end. 
+        #[a:b] is Starts at A, ends at B - 1. If just empty, then meaning anything before or after. 
+        train_dataset = xy[:(int(split*xy.shape[0])),:] #numpy array
+        valid_dataset = xy[(int((split)*xy.shape[0])):,:]
         train_dataset = userData(train_dataset, transform=transforms.Compose([transforms.ToTensor(), transforms.RandomRotation(30),
                                                         transforms.Resize((32,32)),
                                                         transforms.Normalize(mean = (0.1306,), std = (0.3082,))]))
@@ -86,8 +87,8 @@ class Test_Train:
         return device, train_dataset, valid_dataset 
     
     def loading_up(self, train_dataset, test_dataset):
-        train_loader = DataLoader(dataset = train_dataset, batch_size = self.batch_size, shuffle = True)
-        test_loader = DataLoader(dataset = test_dataset, batch_size = 1, shuffle = True) 
+        train_loader = DataLoader(dataset = train_dataset, batch_size = self.batch_size, shuffle = False)
+        test_loader = DataLoader(dataset = test_dataset, batch_size = self.batch_size, shuffle = False) 
     
         return train_loader, test_loader
     
@@ -197,16 +198,16 @@ class Test_Train:
 #For testing purposes when running on this file
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    stupid = Test_Train(55, 26, 0.001, 20)
+    """stupid = Test_Train(55, 26, 0.001, 20)
     device, train_dataset, test_dataset = stupid.setting_up('C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', 50)
     train_load, test_load = stupid.loading_up(train_dataset, test_dataset)
     model = stupid.runModel(train_load, test_load, device, "CNN")
     filename = "CNNV1"
-    torch.save(model,(filename + '.pth'))
-    """loaded_model = torch.load('CNNV1.pth')
+    torch.save(model,(filename + '.pth'))"""
+    loaded_model = torch.load('CNNV1.pth')
     loaded_model.eval()
    
-    input_image = cv2.imread("C:\\Users\\brian\\Downloads\\R.jpg")
+    input_image = cv2.imread("C:\\Users\\brian\\Downloads\\L.jpg")
     #input_image = c
     input_image_gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
     #input_image_gray.resize(32,32)

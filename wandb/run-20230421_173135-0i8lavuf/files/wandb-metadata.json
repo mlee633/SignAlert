@@ -1,0 +1,36 @@
+{
+    "os": "Windows-10-10.0.22621-SP0",
+    "python": "3.8.16",
+    "heartbeatAt": "2023-04-21T05:31:36.081075",
+    "startedAt": "2023-04-21T05:31:35.184255",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "c:/Users/brian/Documents/project-1-python-team_16/python/Brian/CNN/Training.py",
+    "codePath": "python\\Brian\\CNN\\Training.py",
+    "host": "crazykwaibao",
+    "username": "brian",
+    "executable": "C:\\Users\\brian\\miniconda3\\envs\\py38\\python.exe",
+    "cpu_count": 8,
+    "cpu_count_logical": 16,
+    "cpu_freq": {
+        "current": 2508.0,
+        "min": 0.0,
+        "max": 3201.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2508.0,
+            "min": 0.0,
+            "max": 3201.0
+        }
+    ],
+    "disk": {
+        "total": 930.5725746154785,
+        "used": 93.475341796875
+    },
+    "memory": {
+        "total": 15.230907440185547
+    }
+}

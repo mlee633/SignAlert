@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "c:/Users/brian/Documents/project-1-python-team_16/python/Brian/CNN/Training.py", line 202, in <module>
+    device, train_dataset, test_dataset = stupid.setting_up('C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', 50)
+  File "c:/Users/brian/Documents/project-1-python-team_16/python/Brian/CNN/Training.py", line 81, in setting_up
+    train_dataset = userData(train_dataset, transform=transforms.Compose([transforms.ToTensor(), transforms.RandomRotation(30),
+  File "c:\Users\brian\Documents\project-1-python-team_16\python\Brian\CNN\dataset.py", line 10, in __init__
+    self.n_samples = array.shapes[0]
+AttributeError: 'numpy.ndarray' object has no attribute 'shapes'

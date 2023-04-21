@@ -1,0 +1,1 @@
+{"train/loss": 0.07731013000011444, "train/learning_rate": 0.001, "val/top1_accuracy": 0.9996363636363635, "val/top3_accuracy": 2.716654545454546, "val/top5_accuracy": 4.463490909090911, "Shaaran/avg_vloss": 0.018799370154738426, "Shaaran/correct_prediction": 13671, "_timestamp": 1682056701.3482556, "_runtime": 695.9644067287445, "_step": 19, "_wandb": {"runtime": 695}}

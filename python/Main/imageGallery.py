@@ -35,7 +35,7 @@ class imageViewer(QMainWindow):
         imageLabels = data[:,0]
         # Label isn't needed right now
         for label, image in zip(imageLabels, data[:,1:]):
-            if (not self.filter) or (self.labelLetters.get(self.filter) == label):
+            if (self.filter== 'All') or (self.labelLetters.get(self.filter) == label):
                 image = image.reshape(28, 28)
                 im = Image.fromarray(image)
                 im = im.convert("L")

@@ -8,7 +8,7 @@ from CNN_model import CNN
 from GUI_loading import MyApp
 from PyQt5.QtWidgets import QApplication
 import sys
-from Isaac.PyGUI.AlexNet import AlexNet
+from AlexNet import AlexNet
 from LeNet5Model import LeNet5
 import cv2
 import wandb
@@ -66,11 +66,11 @@ class Test_Train:
         self.batch_size = batch_size
         self.num_classes = num_classes
         self.learning_rate = learning_rate
-        self.num_epochs = num_epochs
+        self.num_epochs = num_epochs #Mainly to help determine the transformations since Alexnet require 224 sized images. originally 3 channel but this is from scratch so can be 1 channel
         self.progressBar = MyApp() #PBar()
 
     #num_split only in range from 0 to 1
-    def setting_up(self, filename, num_split):
+    def setting_up(self, filename, num_split, AlexNet):
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         split = num_split/100
         xy = np.genfromtxt(filename, delimiter = ",", dtype = np.uint8)[1:,:]
@@ -78,10 +78,18 @@ class Test_Train:
         #[a:b] is Starts at A, ends at B - 1. If just empty, then meaning anything before or after. 
         train_dataset = xy[:(int(split*xy.shape[0])),:] #numpy array
         valid_dataset = xy[(int((split)*xy.shape[0])):,:]
-        train_dataset = userData(train_dataset, transform=transforms.Compose([transforms.ToTensor(), transforms.RandomRotation(30),
+        if AlexNet == True:
+            train_dataset = userData(train_dataset, transform=transforms.Compose([transforms.ToTensor(), transforms.RandomRotation(30),
+                                                        transforms.Resize((224,224)),
+                                                        transforms.Normalize(mean = (0.4914,), std = (0.2023,))]))
+            valid_dataset = userData(valid_dataset, transform=transforms.Compose([transforms.ToTensor(),
+                                                        transforms.Resize((224,224)),
+                                                        transforms.Normalize(mean = (0.4914,), std = (0.2023,))]))
+        else:
+            train_dataset = userData(train_dataset, transform=transforms.Compose([transforms.ToTensor(), transforms.RandomRotation(30),
                                                         transforms.Resize((32,32)),
                                                         transforms.Normalize(mean = (0.1306,), std = (0.3082,))]))
-        valid_dataset = userData(valid_dataset, transform=transforms.Compose([transforms.ToTensor(),
+            valid_dataset = userData(valid_dataset, transform=transforms.Compose([transforms.ToTensor(),
                                                         transforms.Resize((32,32)),
                                                         transforms.Normalize(mean = (0.1306,), std = (0.3082,))]))
         return device, train_dataset, valid_dataset 
@@ -198,16 +206,19 @@ class Test_Train:
 #For testing purposes when running on this file
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    stupid = Test_Train(55, 26, 0.001, 20)
-    device, train_dataset, test_dataset = stupid.setting_up('C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', 50)
+    """stupid = Test_Train(55, 26, 0.001, 8)
+    device, train_dataset, test_dataset = stupid.setting_up('C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', 50, AlexNet = True)
     train_load, test_load = stupid.loading_up(train_dataset, test_dataset)
-    model = stupid.runModel(train_load, test_load, device, "LeNet5")
-    filename = "LeNetV1"
-    torch.save(model,(filename + '.pth'))
-    """loaded_model = torch.load('CNNV1.pth')
+    model = stupid.runModel(train_load, test_load, device, "AlexNet")
+    filename = "AlexNet"
+    torch.save(model,(filename + '.pth'))"""
+    loaded_model = torch.load('LeNetV1.pth')
     loaded_model.eval()
+
+    for param in loaded_model.parameters():
+            print(param.size())
    
-    input_image = cv2.imread("C:\\Users\\brian\\Downloads\\R2.jpg")
+    input_image = cv2.imread("C:\\Users\\brian\\Downloads\\V.jpg")
     #input_image = c
     input_image_gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
     #input_image_gray.resize(32,32)
@@ -215,9 +226,9 @@ if __name__ == '__main__':
     #print(input_image_gray)
     processingImg = transforms.Compose([
     transforms.ToPILImage(), transforms.Grayscale(1),           
-    transforms.Resize((32,32)),
+    transforms.Resize((224,224)),
     transforms.ToTensor(),
-    transforms.Normalize(mean = (0.1306,), std = (0.3082,))])
+    transforms.Normalize(mean = (0.4914,), std = (0.2023,))])
     input_tensor = processingImg(input_image_gray)
     
     input_batch = input_tensor.unsqueeze(0)

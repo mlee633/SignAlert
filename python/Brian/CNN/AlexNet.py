@@ -1,5 +1,5 @@
 # AlexNet - Deep Convolutional Neural Network
- 
+from torch.utils.data import DataLoader
 import numpy as np
 import torch
 import torch.nn as nn
@@ -11,51 +11,38 @@ from dataset import userData
 # Device configuration
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
  
-
+#def train_valid_loader(file_location_train, )
  
-def get_train_valid_loader(train_dataset,
-                           batch_size,
-                           augment,
-                           random_seed,
-                           valid_size = 0.1,
-                           shuffle = True):
-    normalize = transforms.Normalize(
-        mean = [0.4914, 0.4822, 0.4465],
-        std = [0.2023, 0.1994, 0.2010],
-    )
+"""def get_train_valid_loader(file_location_train, batch_size, augment, random_seed, num_split, shuffle = True):
+    normalize = transforms.Normalize(mean = [0.4914], std = [0.2023],)
  
-    """
-    data transforms for pre-prcoessing the input 
-    testing image before feeding into the net
-    """
+    
+    #data transforms for pre-prcoessing the input 
+    #testing image before feeding into the net
+    
  
-    valid_transforms = transforms.Compose([
-        transforms.Resize((227,227)), # resize the input to 227x227
-        transforms.ToTensor(), # put the input to tensor format
-        normalize,
-        # normalise the input
-        # the normmalisation is based on images from ImageNet
-    ])
- 
+    valid_transforms = transforms.Compose([transforms.Resize((227,227)), # resize the input to 227x227
+                                            transforms.ToTensor(), # put the input to tensor format
+                                            normalize,])# normalise the input 
     if augment:
-        train_transform = transforms.Compose([
-            transforms.RandomCrop(32, padding=4),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            normalize,
-        ])
+        train_transform = transforms.Compose([transforms.RandomCrop(32, padding=4),
+                                                transforms.RandomHorizontalFlip(),
+                                                transforms.ToTensor(),
+                                                normalize,])
     else:
-        train_transform = transforms.Compose([
-            transforms.Resize((227,227)),
-            transforms.ToTensor(),
-            normalize,
-        ])
- 
+        train_transform = transforms.Compose([transforms.Resize((256,256)),
+                                                transforms.ToTensor(),
+                                                normalize,])
+    
+    split = num_split/100
+    xy = np.genfromtxt(file_location_train, delimiter = ",", dtype = np.uint8)[1:,:]
+    train_dataset = xy[:(int(split*xy.shape[0])),:] #numpy array
+    valid_dataset = xy[(int((split)*xy.shape[0])):,:]
             # load the dataset
     train_dataset = userData(train_dataset, train_transform)
  
-    valid_dataset = userData(train_dataset, train_transform)
- 
+    valid_dataset = userData(valid_dataset, train_transform)
+    
     num_train = len(train_dataset)
     indices = list(range(num_train))
     split = int(np.floor(valid_size * num_train))
@@ -100,19 +87,19 @@ def get_test_loader(data_dir,
         dataset, batch_size=batch_size, shuffle=shuffle
     )
  
-    return data_loader
+    return data_loader """
 
 
 # MNIST dataset 
-train_loader, valid_loader = get_train_valid_loader('C:\\Users\\healt\\OneDrive\\문서\\GitHub\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', batch_size = 64, augment = False, random_seed = False)
+#train_loader, valid_loader = get_train_valid_loader('C:\\Users\\healt\\OneDrive\\문서\\GitHub\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', batch_size = 64, augment = False, random_seed = False)
  
-test_loader = get_test_loader('C:\\Users\\healt\\OneDrive\\문서\\GitHub\\project-1-python-team_16\\dataset\\sign_mnist_test.csv', batch_size = 64 )
+#test_loader = get_test_loader('C:\\Users\\healt\\OneDrive\\문서\\GitHub\\project-1-python-team_16\\dataset\\sign_mnist_test.csv', batch_size = 64 )
  
 class AlexNet(nn.Module):  
     def __init__(self, num_classes=10):
         super(AlexNet, self).__init__()
         self.layer1 = nn.Sequential(
-            nn.Conv2d(3, 96, kernel_size=11, stride=4, padding=0),
+            nn.Conv2d(1, 96, kernel_size=11, stride=4, padding=0),
             nn.BatchNorm2d(96),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size = 3, stride = 2))
@@ -136,7 +123,7 @@ class AlexNet(nn.Module):
             nn.MaxPool2d(kernel_size = 3, stride = 2))
         self.fc = nn.Sequential(
             nn.Dropout(0.5),
-            nn.Linear(9216, 4096),
+            nn.Linear(6400, 4096),
             nn.ReLU())
         self.fc1 = nn.Sequential(
             nn.Dropout(0.5),
@@ -157,7 +144,7 @@ class AlexNet(nn.Module):
         out = self.fc2(out)
         return out
  
-num_classes = 10
+"""num_classes = 10
 num_epochs = 20
 batch_size = 64
 learning_rate = 0.005
@@ -203,4 +190,4 @@ for epoch in range(num_epochs):
             correct += (predicted == labels).sum().item()
             del images, labels, outputs
  
-        print('Accuracy of the network on the {} validation images: {} %'.format(5000, 100 * correct / total)) 
+        print('Accuracy of the network on the {} validation images: {} %'.format(5000, 100 * correct / total)) """

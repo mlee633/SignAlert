@@ -61,7 +61,8 @@ class TestingModelGUI(QMainWindow):
         self.tab_widget = None
     def openTesting(self):
         model = torch.load(self.nameFile)
-        test = Testing.TestResults(model=model, images=a)
+        test = Testing.TestResults(model=model, images=self.images)
+        test.show()
     def show_model_options(self):
         # Create a new tab widget
         self.tab_widget = QTabWidget()
@@ -102,8 +103,8 @@ class TestingModelGUI(QMainWindow):
         self.setCentralWidget(self.tab_widget)
 
     def ImagebuttonClick(self):
-        self.nameFile= QFileDialog.getOpenFileNames(self,"Open Image Files",r"<Default dir>", "Images (*.png *.jpg *.jpeg *.bmp);;All Files (*)")[0]
-        print(self.nameFile)
+        self.images= QFileDialog.getOpenFileNames(self,"Open Image Files",r"<Default dir>", "Images (*.png *.jpg *.jpeg *.bmp);;All Files (*)")[0]
+        print(self.images)
 
     def open_camera_window(self):
         self.camera_window = MainWindow()

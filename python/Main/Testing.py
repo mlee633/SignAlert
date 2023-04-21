@@ -56,7 +56,7 @@ class TestResults(QWidget):
         self.model = model
         self.imageIndex = 0
         self.initUI()
-        #self.startTest()
+        self.startTest()
 
     def startTest(self):
         self.clear_text()
@@ -69,11 +69,18 @@ class TestResults(QWidget):
 
             self.tb.append(string.ascii_uppercase[i] + ': ' + str(round((val * 100),2)) + '% accuracy')
         self.tb.append('The best guess we have for this image is: '+ string.ascii_uppercase[(guess.tolist())])
+        
+        
+            
+        if (self.imageIndex == 0):
+            self.backButton.setEnabled(False)
+        else:
+            self.backButton.setEnabled(True)
         self.imageIndex+=1
         if self.imageIndex == len(self.images):
             self.newImageButton.setEnabled(False)
-            
-
+        else:
+            self.newImageButton.setEnabled(True)
                 
     def initUI(self):  
         imgGroupBox = QGroupBox('Image being tested')
@@ -89,23 +96,32 @@ class TestResults(QWidget):
         probVbox = QVBoxLayout()
         probVbox.addWidget(self.tb)
         self.newImageButton = QPushButton('Next Image')
-        probVbox.addWidget(self.newImageButton)
+        self.backButton = QPushButton('Previous Image')
         
+        buttonHbox = QHBoxLayout()
+        buttonHbox.addWidget(self.newImageButton)
+        buttonHbox.addWidget(self.backButton)
+        probVbox.addLayout(buttonHbox)
         probabilityGroupBox.setLayout(probVbox)
         Mainhbox = QHBoxLayout()
-        
+        self.backButton.setEnabled(False)
         Mainhbox.addWidget(imgGroupBox, 1)
         Mainhbox.addWidget(probabilityGroupBox,2)
 
         self.setLayout(Mainhbox)
         self.newImageButton.clicked.connect(self.startTest)
+        self.backButton.clicked.connect(self.back)
         self.setWindowTitle('QTextBrowser')
         self.setGeometry(300, 300, 800, 550)
         #self.show()
 
     def clear_text(self):
         self.tb.clear()
-
+        
+    def back(self): 
+        self.imageIndex = self.imageIndex-2
+        self.startTest()
+       
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

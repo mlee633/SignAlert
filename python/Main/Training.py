@@ -127,28 +127,26 @@ class Test_Train:
 #For testing purposes when running on this file
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    stupid = Test_Train(55, 26, 0.001, 15)
-    device, train_dataset, test_dataset = stupid.setting_up('/Users/shaaranelango/Downloads/project-1-python-team_16/dataset/sign_mnist_train.csv', '/Users/shaaranelango/Downloads/project-1-python-team_16/dataset/sign_mnist_test.csv' )
-    train_load, test_load = stupid.loading_up(train_dataset, test_dataset)
+    #stupid = Test_Train(55, 26, 0.001, 15)
+    #device, train_dataset, test_dataset = stupid.setting_up('/Users/shaaranelango/Downloads/project-1-python-team_16/dataset/sign_mnist_train.csv', '/Users/shaaranelango/Downloads/project-1-python-team_16/dataset/sign_mnist_test.csv' )
+    #train_load, test_load = stupid.loading_up(train_dataset, test_dataset)
     # model = stupid.runModel(train_load, test_load, device, "LeNet5")
     # filename = "properModelV1"
     # torch.save(model,(filename + '.pth'))
-    loaded_model = torch.load('properModelV1.pth')
+    loaded_model = torch.load('LeNet5.pth')
     loaded_model.eval()
    
-    input_image = cv2.imread('/Users/shaaranelango/Downloads/project-1-python-team_16/V.jpg')
+    input_image = cv2.imread("C:\\Users\\brian\\Downloads\\H.jpg")
     #input_image = c
     input_image_gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
     #input_image_gray.resize(32,32)
     cv2.imwrite('image.png',input_image_gray)
     #print(input_image_gray)
-    processingImg = transforms.Compose([
-    transforms.ToPILImage(), transforms.Grayscale(1),           
-    transforms.Resize((32,32)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean = (0.1306,), std = (0.3082,))])
-    input_tensor = processingImg(input_image_gray)
+    processingImg = transforms.Compose([transforms.ToPILImage(), 
+                                        transforms.Grayscale(1), transforms.Resize((32,32)), 
+                                        transforms.ToTensor(), transforms.Normalize(mean = (0.1306,), std = (0.3082,))])
     
+    input_tensor = processingImg(input_image_gray)   
     input_batch = input_tensor.unsqueeze(0)
     t = transforms.ToPILImage()
     im = t(input_image_gray)

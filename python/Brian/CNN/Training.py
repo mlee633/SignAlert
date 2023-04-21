@@ -198,13 +198,13 @@ class Test_Train:
 #For testing purposes when running on this file
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    """stupid = Test_Train(55, 26, 0.001, 20)
+    stupid = Test_Train(55, 26, 0.001, 20)
     device, train_dataset, test_dataset = stupid.setting_up('C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', 50)
     train_load, test_load = stupid.loading_up(train_dataset, test_dataset)
-    model = stupid.runModel(train_load, test_load, device, "CNN")
-    filename = "CNNV1"
-    torch.save(model,(filename + '.pth'))"""
-    loaded_model = torch.load('CNNV1.pth')
+    model = stupid.runModel(train_load, test_load, device, "LeNet5")
+    filename = "LeNetV1"
+    torch.save(model,(filename + '.pth'))
+    """loaded_model = torch.load('CNNV1.pth')
     loaded_model.eval()
    
     input_image = cv2.imread("C:\\Users\\brian\\Downloads\\R2.jpg")

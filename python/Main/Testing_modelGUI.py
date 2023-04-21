@@ -16,6 +16,7 @@ class TestingModelGUI(QMainWindow):
         self.Exit_button = QPushButton("Exit")
         self.Exit_button.clicked.connect(self.exit_application)
         self.statusBar().addPermanentWidget(self.Exit_button)
+        self.choose_images_button.clicked.connect(self.show_image_options)
 
 
     def initUI(self):
@@ -65,7 +66,7 @@ class TestingModelGUI(QMainWindow):
         file_label = QLabel("Choose model file:")
         file_layout.addWidget(file_label)
         file_button = QPushButton("Open", self)
-        file_button.clicked.connect(self.buttonClick)
+        file_button.clicked.connect(self.ModelbuttonClick)
         file_layout.addWidget(file_button)
         file_tab.setLayout(file_layout)
         self.tab_widget.addTab(file_tab, "Model")
@@ -73,12 +74,34 @@ class TestingModelGUI(QMainWindow):
         # Set the tab widget as the central widget
         self.setCentralWidget(self.tab_widget)
 
+    def ModelbuttonClick(self):
+        self.nameFile= QFileDialog.getOpenFileName(self,"Open training dataset",r"<Default dir>", "PTH (*.pth);;All Files (*)")[0]
+
+    def show_image_options(self):
+        # Create a new tab widget
+        self.tab_widget = QTabWidget()
+
+        # Create a tab for choosing the image files
+        file_tab = QWidget()
+        file_layout = QVBoxLayout()
+        file_label = QLabel("Choose image files:")
+        file_layout.addWidget(file_label)
+        file_button = QPushButton("Open", self)
+        file_button.clicked.connect(self.ImagebuttonClick)
+        file_layout.addWidget(file_button)
+        file_tab.setLayout(file_layout)
+        self.tab_widget.addTab(file_tab, "Images")
+
+        # Set the tab widget as the central widget
+        self.setCentralWidget(self.tab_widget)
+
+    def ImagebuttonClick(self):
+        self.nameFile= QFileDialog.getOpenFileNames(self,"Open Image Files",r"<Default dir>", "Images (*.png *.jpg *.jpeg *.bmp);;All Files (*)")[0]
+        print(self.nameFile)
+
     def open_camera_window(self):
         self.camera_window = MainWindow()
         self.camera_window.show()
-
-    def buttonClick(self):
-        self.nameFile= QFileDialog.getOpenFileName(self,"Open training dataset",r"<Default dir>", "PTH (*.pth);;All Files (*)")[0]
 
     def back_to_main(self):
         # Switch back to the main widget

@@ -4,6 +4,8 @@ import torch
 import torchvision.transforms as transforms
 import numpy as np
 import sys
+import string
+
 from PyQt5.QtWidgets import*
 from PyQt5.QtGui import*
 from PyQt5.QtCore import*
@@ -36,21 +38,43 @@ def testModel(model,image):
         output = model(input_batch)
 
 
-    print(output)
+    # print(output)
     probabilities = torch.nn.functional.softmax(output, dim = 1)
-    print(probabilities)
-    probabilities = np.argmax(probabilities)
-    print(probabilities)
+
+    guess = np.argmax(probabilities)
+    # print(probabilities)
+    # probabilities = np.argmax(probabilities)
+    # print(probabilities)
+    return probabilities, guess
+    
     
 class TestResults(QWidget):
 
     def __init__(self,model,images):
         super().__init__()
-        self.initUI()
         self.images = images
         self.model = model
+        self.imageIndex = 0
+        self.initUI()
+        #self.startTest()
 
+    def startTest(self):
+        self.clear_text()
+        image = self.images[self.imageIndex]
+        high_res = QSize(320,320)
+        self.currentImage.setPixmap(QPixmap(image).scaled(high_res))
+        probs, guess = testModel(model=self.model,image=image)
+        probs = probs.squeeze().tolist()
+        for i,val in enumerate(probs):
 
+            self.tb.append(string.ascii_uppercase[i] + ': ' + str(round((val * 100),2)) + '% accuracy')
+        self.tb.append('The best guess we have for this image is: '+ string.ascii_uppercase[(guess.tolist())])
+        self.imageIndex+=1
+        if self.imageIndex == len(self.images):
+            self.newImageButton.setEnabled(False)
+            
+
+                
     def initUI(self):  
         imgGroupBox = QGroupBox('Image being tested')
         probabilityGroupBox = QGroupBox('Probabilities')
@@ -64,6 +88,9 @@ class TestResults(QWidget):
         imgGroupBox.setLayout(imageVbox)
         probVbox = QVBoxLayout()
         probVbox.addWidget(self.tb)
+        self.newImageButton = QPushButton('Next Image')
+        probVbox.addWidget(self.newImageButton)
+        
         probabilityGroupBox.setLayout(probVbox)
         Mainhbox = QHBoxLayout()
         
@@ -71,9 +98,9 @@ class TestResults(QWidget):
         Mainhbox.addWidget(probabilityGroupBox,2)
 
         self.setLayout(Mainhbox)
-
+        self.newImageButton.clicked.connect(self.startTest)
         self.setWindowTitle('QTextBrowser')
-        self.setGeometry(300, 300, 600, 300)
+        self.setGeometry(300, 300, 800, 550)
         self.show()
 
     def clear_text(self):
@@ -82,5 +109,6 @@ class TestResults(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = TestResults('x','image.png')
+    model = torch.load('properModelV1.pth')
+    ex = TestResults(model=model,images=['/Users/shaaranelango/Downloads/project-1-python-team_16/T.jpg','/Users/shaaranelango/Downloads/project-1-python-team_16/W.jpg'])
     sys.exit(app.exec_())

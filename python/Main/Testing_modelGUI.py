@@ -13,6 +13,10 @@ class TestingModelGUI(QMainWindow):
         self.Back_button = QPushButton("Back")
         self.Back_button.clicked.connect(self.back_to_main) 
         self.statusBar().addWidget(self.Back_button)
+        self.Exit_button = QPushButton("Exit")
+        self.Exit_button.clicked.connect(self.exit_application)
+        self.statusBar().addPermanentWidget(self.Exit_button)
+
 
     def initUI(self):
         self.setWindowTitle('SignAlert')
@@ -82,6 +86,9 @@ class TestingModelGUI(QMainWindow):
 
         self.tab_widget = None
         self.initUI()
+
+    def exit_application(self):
+        QApplication.quit()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

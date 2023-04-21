@@ -3,8 +3,10 @@ import numpy as np
 from PIL import Image
 import cv2
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, QRect
-from PyQt5.QtGui import QImage, QPixmap, QPainter, QPen
+from PyQt5.QtGui import QImage, QPixmap, QPainter, QPen, QIcon
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QHBoxLayout
+import os
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
 class CameraThread(QThread):
@@ -38,6 +40,7 @@ class MainWindow(QWidget):
         super().__init__()
         self.init_ui()  
         self.setWindowTitle('SignAlert')
+        self.setWindowIcon(QIcon(dir_path+'/signalertlogo.png'))
 
     def init_ui(self):
         self.webcam_label = QLabel(self)

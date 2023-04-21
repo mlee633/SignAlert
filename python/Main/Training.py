@@ -8,7 +8,7 @@ from CNN_model import CNN
 from GUI_loading import MyApp
 from PyQt5.QtWidgets import QApplication
 import sys
-#from Isaac.PyGUI.AlexNet import AlexNet
+from AlexNet import AlexNet
 from LeNet5Model import LeNet5
 import cv2
 #from python.Shaaran.PyQtGUI.progressBar import PBar
@@ -58,8 +58,8 @@ class Test_Train:
             model = CNN(self.num_classes).to(device)
         elif modelType == 'LeNet5':
             model = LeNet5(self.num_classes).to(device)
-        #else:
-        #    model = AlexNet(self.num_classes).to(device)
+        else:
+           model = AlexNet(self.num_classes).to(device)
 
         criterion = nn.CrossEntropyLoss()
         optimizer  = torch.optim.Adam(model.parameters(), lr=self.learning_rate, weight_decay=0.01)

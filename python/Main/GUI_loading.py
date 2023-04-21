@@ -43,7 +43,7 @@ class MyApp(QWidget):
     #updates the progress bar at every event that happens
     def updateProgress(self, progress):
         self.pbar.setValue(progress)
-        QApplication.processEvents()
+        QApplication.processEvents() # Refreshes the GUI
     
     def button_clicked(self):
         self.action = False

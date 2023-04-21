@@ -1,5 +1,6 @@
 import sys
 import torch
+import Testing
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QTabWidget, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFileDialog
 from PyQt5.QtGui import QIcon
 from webcam_code import MainWindow
@@ -58,9 +59,9 @@ class TestingModelGUI(QMainWindow):
 
         # Keep a reference to the tab widget
         self.tab_widget = None
-    def openTraining(self):
+    def openTesting(self):
         model = torch.load(self.nameFile)
-
+        test = Testing.TestResults(model=model, images=a)
     def show_model_options(self):
         # Create a new tab widget
         self.tab_widget = QTabWidget()

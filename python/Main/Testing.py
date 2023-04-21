@@ -111,4 +111,5 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     model = torch.load('properModelV1.pth')
     ex = TestResults(model=model,images=['/Users/shaaranelango/Downloads/project-1-python-team_16/T.jpg','/Users/shaaranelango/Downloads/project-1-python-team_16/W.jpg'])
+    ex.show()
     sys.exit(app.exec_())

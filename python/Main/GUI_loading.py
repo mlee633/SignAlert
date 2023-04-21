@@ -47,7 +47,7 @@ class MyApp(QWidget):
     
     def button_clicked(self):
         self.action = False
-        self.close()
+        self.destroy()
 
 #Testing purposes    
 if __name__ == '__main__':

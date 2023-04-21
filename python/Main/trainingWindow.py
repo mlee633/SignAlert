@@ -3,6 +3,7 @@ import imageGallery
 import string
 import Training
 import torch
+import numpy as np
 from PyQt5.QtWidgets import*
 from PyQt5.QtCore import*
 
@@ -34,7 +35,7 @@ class trainWindow(QWidget):
         self.setLayout(grid)
 
         self.setWindowTitle('SignAlert - Train')
-        self.setGeometry(300, 300, 900,550)
+        self.setGeometry(300, 300, 1100,750)
         #self.show()
 
     def createUserDataset(self):
@@ -145,7 +146,8 @@ class trainWindow(QWidget):
         self.cb = QComboBox(self)
         self.cb.addItem('All')
         for letter in string.ascii_uppercase:
-            self.cb.addItem(letter)
+            if (letter != 'J') and (letter != 'Z'):
+                self.cb.addItem(letter)
 
         hbox1 = QHBoxLayout()
         hbox1.addWidget(viewImageButton)
@@ -155,6 +157,8 @@ class trainWindow(QWidget):
         hbox2.addWidget(self.modelLineEdit)
         vbox = QVBoxLayout()
         vbox.addLayout(hbox2)
+        self.datasetBrowser = QTextBrowser()
+        vbox.addWidget(self.datasetBrowser)
         vbox.addStretch(1)
         vbox.addLayout(hbox1)
         
@@ -169,6 +173,17 @@ class trainWindow(QWidget):
         self.label1.setText("Directory: \n" + self.nameFile)
         self.label1.adjustSize()       # adjust the label size automatically
         self.trainGroupBox.setEnabled(True)
+        self.datasetBrowser.clear()
+        xy = np.genfromtxt(self.nameFile, delimiter = ",", dtype = np.uint8)[1:,0]
+        zeros = np.zeros(25)
+        for label in xy:
+            zeros[label] +=1
+        for i,num in enumerate(zeros):
+            letter = string.ascii_uppercase[i]
+            if letter != 'J':
+                self.datasetBrowser.append(letter + ': '+str(int(num)) + ' counts')
+                QApplication.processEvents()
+            
     
     def sliderChange(self):
         self.sliderText.setText('Train/Validation ratio: ' + str(self.slider.value()) + '/' + str(100-self.slider.value()))

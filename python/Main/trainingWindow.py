@@ -192,16 +192,16 @@ class trainWindow(QWidget):
 
         # The training process (Could potentially have been put into a function itself)
         self.train = Training.Test_Train(batch_size=self.batchBox.value(),learning_rate=self.learnBox.value(),num_epochs=self.epochBox.value(),num_classes=26)
-        self.device, self.train_dataset, self.test_dataset = self.train.setting_up(self.nameFile,self.nameFile)
-        self.train_load, self.test_load = self.train.loading_up(self.train_dataset, self.test_dataset)
+        self.device, self.train_dataset, self.valid_dataset = self.train.setting_up(file_location_train=self.nameFile, num_split=self.slider.value())
+        self.train_load, self.valid_load = self.train.loading_up(self.train_dataset, self.valid_dataset)
         
         # Checking which model was checked
         if self.LenetRadio.isChecked():
-            self.model = self.train.runModel(self.train_load, self.test_load, self.device, modelType='LeNet5')
+            self.model = self.train.runModel(self.train_load, self.valid_load, self.device, modelType='LeNet5')
         elif self.AlexNetRadio.isChecked():
-            self.model = self.train.runModel(self.train_load, self.test_load, self.device, modelType='AlexNet')
+            self.model = self.train.runModel(self.train_load, self.valid_load, self.device, modelType='AlexNet')
         else:
-            self.model = self.train.runModel(self.train_load, self.test_load, self.device, modelType='CNN')
+            self.model = self.train.runModel(self.train_load, self.valid_load, self.device, modelType='CNN')
         # Saving the new model
         torch.save(self.model,(self.modelName + '.pth'))
 if __name__ == '__main__':

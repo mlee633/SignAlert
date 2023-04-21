@@ -122,7 +122,7 @@ class trainWindow(QWidget):
         startTrainButton.clicked.connect(self.trainButtonClicked)
         
         self.modelLineEdit.setPlaceholderText('model1')
-        self.modelLineEdit.setText('ModelName without .pth')
+        self.modelLineEdit.setText('Give a name of saved model')
         viewImageButton = QPushButton('View images from dataset')
         self.cb = QComboBox(self)
         self.cb.addItem(None)

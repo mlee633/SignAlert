@@ -8,7 +8,7 @@ from CNN_model import CNN
 from GUI_loading import MyApp
 from PyQt5.QtWidgets import QApplication
 import sys
-#from Isaac.PyGUI.AlexNet import AlexNet
+from Isaac.PyGUI.AlexNet import AlexNet
 from LeNet5Model import LeNet5
 import cv2
 import wandb
@@ -87,7 +87,7 @@ class Test_Train:
         return device, train_dataset, valid_dataset 
     
     def loading_up(self, train_dataset, test_dataset):
-        train_loader = DataLoader(dataset = train_dataset, batch_size = self.batch_size, shuffle = False)
+        train_loader = DataLoader(dataset = train_dataset, batch_size = self.batch_size, shuffle = True)
         test_loader = DataLoader(dataset = test_dataset, batch_size = self.batch_size, shuffle = False) 
     
         return train_loader, test_loader
@@ -98,8 +98,8 @@ class Test_Train:
             model = CNN(self.num_classes).to(device)
         elif modelType == 'LeNet5':
             model = LeNet5(self.num_classes).to(device)
-        #else:
-        #    model = AlexNet(self.num_classes).to(device)
+        else:
+            model = AlexNet(self.num_classes).to(device)
 
         criterion = nn.CrossEntropyLoss()
         optimizer  = torch.optim.Adam(model.parameters(), lr=self.learning_rate, weight_decay=0.01)
@@ -207,7 +207,7 @@ if __name__ == '__main__':
     loaded_model = torch.load('CNNV1.pth')
     loaded_model.eval()
    
-    input_image = cv2.imread("C:\\Users\\brian\\Downloads\\L.jpg")
+    input_image = cv2.imread("C:\\Users\\brian\\Downloads\\R2.jpg")
     #input_image = c
     input_image_gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
     #input_image_gray.resize(32,32)

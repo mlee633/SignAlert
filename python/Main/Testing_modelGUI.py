@@ -111,7 +111,7 @@ class TestingModelGUI(QMainWindow):
         self.initUI()
 
     def exit_application(self):
-        QApplication.quit()
+        self.destroy()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

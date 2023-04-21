@@ -148,7 +148,7 @@ if __name__ == '__main__':
     loaded_model = torch.load('properModelV1.pth')
     loaded_model.eval()
    
-    input_image = cv2.imread('/Users/shaaranelango/Downloads/project-1-python-team_16/D.jpg')
+    input_image = cv2.imread('/Users/shaaranelango/Downloads/project-1-python-team_16/V.jpg')
     #input_image = c
     input_image_gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
     #input_image_gray.resize(32,32)

@@ -2,12 +2,14 @@ from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLa
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt, QSettings
 import os
+import trainingWindow
+import Testing_modelGUI
 dir_path = os.path.dirname(os.path.realpath(__file__))
 class MainMenu(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('SignAlert')
-        self.setWindowIcon(QIcon('ASL-icon.png'))
+        self.setWindowIcon(QIcon(dir_path+'/ASL-icon.png'))
         self.setGeometry(300, 300, 500, 350)
         self.center()
         self.initUI()
@@ -58,10 +60,12 @@ class MainMenu(QWidget):
         self.show()
 
     def open_training(self):
-        print('Opening Training Tab...')
+        self.train = trainingWindow.trainWindow()
+        self.train.show()
 
     def open_testing(self):
-        print('Opening Testing Tab...')
+        self.test = Testing_modelGUI.TestingModelGUI()
+        self.test.show()
 
     def change_color(self):
         color = QColorDialog.getColor()

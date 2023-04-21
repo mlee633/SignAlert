@@ -86,7 +86,7 @@ class MainWindow(QWidget):
         self.camera_thread._run_flag = False
         self.webcam_label.clear()
         self.camera_thread.stop()
-        self.camera_thread.cap()
+        self.camera_thread.cap.release()
         cv2.destroyAllWindows()
         self.destroy()
 

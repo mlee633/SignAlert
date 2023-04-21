@@ -1,6 +1,8 @@
 import sys
 import imageGallery
 import string
+import Training
+import torch
 from PyQt5.QtWidgets import*
 from PyQt5.QtCore import*
 
@@ -29,8 +31,8 @@ class trainWindow(QWidget):
         self.setLayout(grid)
 
         self.setWindowTitle('SignAlert - Train')
-        self.setGeometry(300, 300, 700, 450)
-        self.show()
+        self.setGeometry(300, 300, 900,550)
+        #self.show()
 
     def createUserDataset(self):
         groupbox = QGroupBox('Choose Training Dataset (.csv format)')
@@ -59,44 +61,44 @@ class trainWindow(QWidget):
 
     def createChooseModel(self):
         groupbox = QGroupBox('Choose type of CNN model to use:')
-        radio1 = QRadioButton('LeNet5')
-        radio2 = QRadioButton('AlexNet')
-        radio3 = QRadioButton('BriaNet')
-        radio1.setChecked(True)
+        self.LenetRadio = QRadioButton('LeNet5')
+        self.AlexNetRadio = QRadioButton('AlexNet')
+        self.BriaNetRadio = QRadioButton('BriaNet')
+        self.LenetRadio.setChecked(True)
 
         vbox = QVBoxLayout()
-        vbox.addWidget(radio1)
-        vbox.addWidget(radio2)
-        vbox.addWidget(radio3)
+        vbox.addWidget(self.LenetRadio)
+        vbox.addWidget(self.AlexNetRadio)
+        vbox.addWidget(self.BriaNetRadio)
         groupbox.setLayout(vbox)
         return groupbox
 
     def createParameters(self):
         groupbox = QGroupBox('Change Hyperparameters')
-        epochBox = QSpinBox()
-        epochBox.setRange(5,30)
+        self.epochBox = QSpinBox()
+        self.epochBox.setRange(5,30)
         epochLabel = QLabel("Number of epochs (5 - 20 range)")
         epochHbox = QHBoxLayout()
         epochHbox.addWidget(epochLabel)
-        epochHbox.addWidget(epochBox)
+        epochHbox.addWidget(self.epochBox)
         epochHbox.addStretch(1)
 
         batchLabel = QLabel("Batch Size: (30 - 128 Range)")
-        batchBox = QSpinBox()
-        batchBox.setRange(30,128)
+        self.batchBox = QSpinBox()
+        self.batchBox.setRange(30,128)
         batchHbox = QHBoxLayout()
         batchHbox.addWidget(batchLabel)
-        batchHbox.addWidget(batchBox)
+        batchHbox.addWidget(self.batchBox)
         batchHbox.addStretch(1)
 
         learnLabel = QLabel("Learning Rate: (0.001 - 0.1 range)")
-        learnBox = QDoubleSpinBox()
-        learnBox.setRange(0.001,0.1)
-        learnBox.setSingleStep(0.001)
-        learnBox.setDecimals(3)
+        self.learnBox = QDoubleSpinBox()
+        self.learnBox.setRange(0.001,0.1)
+        self.learnBox.setSingleStep(0.001)
+        self.learnBox.setDecimals(3)
         learnHbox = QHBoxLayout()
         learnHbox.addWidget(learnLabel)
-        learnHbox.addWidget(learnBox)
+        learnHbox.addWidget(self.learnBox)
         learnHbox.addStretch(1)
         vbox = QVBoxLayout()
         vbox.addLayout(epochHbox)
@@ -116,20 +118,27 @@ class trainWindow(QWidget):
 
         # different push buttons
         startTrainButton = QPushButton('Train Model using selected dataset')
+        self.modelLineEdit = QLineEdit()
+        startTrainButton.clicked.connect(self.trainButtonClicked)
+        
+        self.modelLineEdit.setPlaceholderText('model1')
+        self.modelLineEdit.setText('ModelName without .pth')
         viewImageButton = QPushButton('View images from dataset')
         self.cb = QComboBox(self)
         self.cb.addItem(None)
         for letter in string.ascii_uppercase:
             self.cb.addItem(letter)
 
-        hbox = QHBoxLayout()
-        hbox.addWidget(viewImageButton)
-        hbox.addWidget(self.cb)
-
+        hbox1 = QHBoxLayout()
+        hbox1.addWidget(viewImageButton)
+        hbox1.addWidget(self.cb)
+        hbox2 = QHBoxLayout()
+        hbox2.addWidget(startTrainButton)
+        hbox2.addWidget(self.modelLineEdit)
         vbox = QVBoxLayout()
-        vbox.addWidget(startTrainButton)
+        vbox.addLayout(hbox2)
         vbox.addStretch(1)
-        vbox.addLayout(hbox)
+        vbox.addLayout(hbox1)
         
         groupbox.setLayout(vbox)
         viewImageButton.clicked.connect(self.openDatasetViewer)
@@ -145,8 +154,25 @@ class trainWindow(QWidget):
     def openDatasetViewer(self):
     
         self.w = imageGallery.imageViewer(str(self.nameFile),(self.cb.currentText()))
+        
         self.w.show()
+    def trainButtonClicked(self):
+        self.modelName = self.modelLineEdit.text()
+        self.modelName = self.modelName.strip()
+        if self.modelName == '':
+            self.modelName = 'model2'
+        self.train = Training.Test_Train(batch_size=self.batchBox.value(),learning_rate=self.learnBox.value(),num_epochs=self.epochBox.value(),num_classes=26)
+        self.device, self.train_dataset, self.test_dataset = self.train.setting_up(self.nameFile,self.nameFile)
+        self.train_load, self.test_load = self.train.loading_up(self.train_dataset, self.test_dataset)
+        if self.LenetRadio.isChecked():
+            self.model = self.train.runModel(self.train_load, self.test_load, self.device, modelType='LeNet5')
+        elif self.AlexNetRadio.isChecked():
+            self.model = self.train.runModel(self.train_load, self.test_load, self.device, modelType='AlexNet')
+        else:
+            self.model = self.train.runModel(self.train_load, self.test_load, self.device, modelType='CNN')
+        torch.save(self.model,(self.modelName + '.pth'))
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = trainWindow()
+    ex.show()
     sys.exit(app.exec_())

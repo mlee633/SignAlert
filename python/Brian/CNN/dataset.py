@@ -4,8 +4,9 @@ from PIL import Image
 import math
 
 class userData(Dataset):
-    def __init__(self, file,transform =None):
+    def __init__(self, file, num_split, transform =None):
         # data loading
+        num_split = num_split/100
         xy = np.genfromtxt(file, delimiter=",", dtype=np.uint8)[1:, :]
         self.x = (xy[:,1:])
         self.y = (xy[:,[0]]) 

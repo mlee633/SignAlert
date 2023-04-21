@@ -11,6 +11,7 @@ import sys
 #from Isaac.PyGUI.AlexNet import AlexNet
 from LeNet5Model import LeNet5
 import cv2
+import wandb
 #from python.Shaaran.PyQtGUI.progressBar import PBar
 
 ## Found off internet as a Transform to add Guassian Noise to make the dataset less overfitted (https://discuss.pytorch.org/t/how-to-add-noise-to-mnist-dataset-when-using-pytorch/59745)
@@ -24,6 +25,41 @@ class AddGaussianNoise(object):
     
     def __repr__(self):
         return self.__class__.__name__ + '(mean={0}, std={1})'.format(self.mean, self.std)
+    
+wandb.init(
+    # set the wandb project where this run will be logged
+    project="my-awesome-project",
+    group = "testing 1", 
+    name = "CNN graph?",
+    
+    # track hyperparameters and run metadata
+    config={
+    "learning_rate": 0.02,
+    "architecture": "CNN",
+    "dataset": "CIFAR-100",
+    "epochs": 10,
+    }
+)
+
+def top_k_accuracy(scores, labels, topk=(1, )):
+    """Calculate top k accuracy score.
+    Args:
+        scores (list[np.ndarray]): Prediction scores for each class.
+        labels (list[int]): Ground truth labels.
+        topk (tuple[int]): K value for top_k_accuracy. Default: (1, ).
+    Returns:
+        list[float]: Top k accuracy score for each k.
+    """
+    res = np.zeros(len(topk))
+    labels = np.array(labels)[:, np.newaxis]
+    for i, k in enumerate(topk):
+        max_k_preds = np.argsort(scores, axis=1)[:, -k:][:, ::-1]
+        match_array = np.logical_or.reduce(max_k_preds == labels, axis=1)
+        topk_acc_score = match_array.sum() / match_array.shape[0]
+        res[i] = topk_acc_score
+
+    return res
+
 
 class Test_Train:
     def __init__(self, batch_size, num_classes, learning_rate, num_epochs):
@@ -33,22 +69,24 @@ class Test_Train:
         self.num_epochs = num_epochs
         self.progressBar = MyApp() #PBar()
 
-    def setting_up(self, file_location_train, file_location_test):
+    #num_split only in range from 0 to 1
+    def setting_up(self, file_location_train, num_split):
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        train_dataset = userData(file_location_train,
-                         transform=transforms.Compose([transforms.ToTensor(), transforms.RandomRotation(30),
-                                                        
-                                                        transforms.Resize((32,32)),
-                                                        transforms.Normalize(mean = (0.1346,), std = (0.3582,))]))
-        test_dataset = userData(file_location_test,
+        
+        train_dataset = userData(file_location_train, num_split, transforms = None)
+        train_size = int(num_split * len(train_dataset))
+        valid_size = len(train_dataset) - train_size
+        train_dataset, valid_dataset = torch.utils.data.random_split(train_dataset, [train_size, valid_size])
+        train_data = 
+        valid_dataset = userData(,
                          transform=transforms.Compose([transforms.ToTensor(),
                                                         transforms.Resize((32,32)),
                                                         transforms.Normalize(mean = (0.1306,), std = (0.3082,))]))
-        return device, train_dataset, test_dataset 
+        return device, train_dataset, valid_dataset 
     
     def loading_up(self, train_dataset, test_dataset):
         train_loader = DataLoader(dataset = train_dataset, batch_size = self.batch_size, shuffle = True)
-        test_loader = DataLoader(dataset = test_dataset, batch_size = self.batch_size, shuffle = True) 
+        test_loader = DataLoader(dataset = test_dataset, batch_size = 1, shuffle = True) 
     
         return train_loader, test_loader
     
@@ -70,6 +108,7 @@ class Test_Train:
 
         #Training along with accuracy of model
         counter = 0
+        loop = 0
         for epoch in range(self.num_epochs):
             running_loss = 0
             for i, (images, labels) in enumerate(train_loader): #tqdm(enumerate(train_loader), total = len(train_loader), leave = False):
@@ -95,16 +134,23 @@ class Test_Train:
                 
             #Calculates the accuracy of the model for every epoch loop
             running_vloss = 0
+            running_acc = np.zeros(3)
             with torch.no_grad():
                 correct = 0
                 total = 0    
                 for i, (images, labels) in enumerate(test_loader):
+                    #print(labels.shape)
+                    outputs = model(images)
+                    #print(outputs.shape)
+                    running_acc += top_k_accuracy(outputs.detach().cpu().numpy(),
+                                           labels.detach().cpu().numpy(), topk=(1, 3, 5))
+
                     labels = labels.T
                     labels = np.ravel(labels)
                     labels = torch.from_numpy(labels)
                     images = images.to(device)
                     labels = labels.to(device)
-                    outputs = model(images)
+                    #outputs = model(images)
                     vloss = criterion(outputs,labels)
                     running_vloss+= vloss
                     _, predicted = torch.max(outputs.data, 1)
@@ -113,9 +159,20 @@ class Test_Train:
                     avg_vloss = running_vloss / (i + 1)
                     print("LOSS train {} valid {}".format(avg_loss, avg_vloss))
 
+
             #Displays this onto the textbox that is located above the progress bar. Also seems like number of train images are len(train_loader)
+            loop += 1
+            print("Loop Num: {}=========================================================".format(loop))
             self.progressBar.tb.append('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, self.num_epochs, loss.item()))
             self.progressBar.tb.append('Accuracy of the network on the {} train images: {:.2f} % \n'.format(27455, 100*correct/total))
+            running_acc /= len(test_loader)
+            wandb.log({'train/loss': avg_loss,
+                'train/learning_rate': self.learning_rate,
+                'val/top1_accuracy': running_acc[0].item(),
+                'val/top3_accuracy': running_acc[1].item(),
+                'val/top5_accuracy': running_acc[2].item(),
+                'Shaaran/avg_vloss' : avg_vloss,
+                'Shaaran/correct_prediction': correct})
         return model
 
     def saving_model(self, trained_model, file_name):
@@ -139,16 +196,16 @@ class Test_Train:
 #For testing purposes when running on this file
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    stupid = Test_Train(55, 26, 0.001, 15)
-    device, train_dataset, test_dataset = stupid.setting_up('/Users/shaaranelango/Downloads/project-1-python-team_16/dataset/sign_mnist_train.csv', '/Users/shaaranelango/Downloads/project-1-python-team_16/dataset/sign_mnist_test.csv' )
+    stupid = Test_Train(55, 26, 0.001, 20)
+    device, train_dataset, test_dataset = stupid.setting_up('C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', 'C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_test.csv' )
     train_load, test_load = stupid.loading_up(train_dataset, test_dataset)
-    # model = stupid.runModel(train_load, test_load, device, "LeNet5")
-    # filename = "properModelV1"
-    # torch.save(model,(filename + '.pth'))
-    loaded_model = torch.load('properModelV1.pth')
+    model = stupid.runModel(train_load, test_load, device, "CNN")
+    filename = "CNNV1"
+    torch.save(model,(filename + '.pth'))
+    """loaded_model = torch.load('CNNV1.pth')
     loaded_model.eval()
    
-    input_image = cv2.imread('/Users/shaaranelango/Downloads/project-1-python-team_16/K.jpg')
+    input_image = cv2.imread("C:\\Users\\brian\\Downloads\\R.jpg")
     #input_image = c
     input_image_gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
     #input_image_gray.resize(32,32)
@@ -187,4 +244,4 @@ if __name__ == '__main__':
     #'C:\\Users\\OEM\\Downloads\\archive\sign_mnist_train\\sign_mnist_train.csv'
     #'C:\\Users\\OEM\\Downloads\\archive\sign_mnist_test\\sign_mnist_test.csv')
     #C:\\Users\\OEM\\Documents\\project-1-python-team_16\\python\\Brian\\CNN\\WIN_20230420_01_04_07_Pro.jpg
-    #'C:\\Users\\brian\\Documents\\project-1-python-team_16\\python\\Brian\\CNN\\WIN_20230420_01_04_07_Pro.jpg'
+    #'C:\\Users\\brian\\Documents\\project-1-python-team_16\\python\\Brian\\CNN\\WIN_20230420_01_04_07_Pro.jpg'"""

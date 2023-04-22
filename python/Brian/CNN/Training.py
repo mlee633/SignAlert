@@ -30,14 +30,14 @@ wandb.init(
     # set the wandb project where this run will be logged
     project="my-awesome-project",
     group = "testing 1", 
-    name = "CNN graph?",
+    name = "AlexNet",
     
     # track hyperparameters and run metadata
     config={
-    "learning_rate": 0.02,
-    "architecture": "CNN",
-    "dataset": "CIFAR-100",
-    "epochs": 10,
+    "learning_rate": 0.001,
+    "architecture": "AlexNet",
+    "dataset": "MINIST sign-language",
+    "epochs": 8,
     }
 )
 
@@ -174,7 +174,7 @@ class Test_Train:
             loop += 1
             print("Loop Num: {}=========================================================".format(loop))
             self.progressBar.tb.append('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, self.num_epochs, loss.item()))
-            self.progressBar.tb.append('Accuracy of the network on the {} train images: {:.2f} % \n'.format(27455, 100*correct/total))
+            self.progressBar.tb.append('Accuracy of the network on the {} train images: {:.2f} % \n'.format(test_loader.n_samples, 100*correct/total))
             running_acc /= len(test_loader)
             wandb.log({'train/loss': avg_loss,
                 'train/learning_rate': self.learning_rate,
@@ -182,7 +182,7 @@ class Test_Train:
                 'val/top3_accuracy': running_acc[1].item(),
                 'val/top5_accuracy': running_acc[2].item(),
                 'Shaaran/avg_vloss' : avg_vloss,
-                'Shaaran/correct_prediction': correct})
+                'Shaaran/correct_prediction': (100*correct/total)})
         return model
 
     def saving_model(self, trained_model, file_name):
@@ -206,13 +206,13 @@ class Test_Train:
 #For testing purposes when running on this file
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    """stupid = Test_Train(55, 26, 0.001, 8)
+    stupid = Test_Train(55, 26, 0.001, 8)
     device, train_dataset, test_dataset = stupid.setting_up('C:\\Users\\brian\Documents\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', 50, AlexNet = True)
     train_load, test_load = stupid.loading_up(train_dataset, test_dataset)
     model = stupid.runModel(train_load, test_load, device, "AlexNet")
-    filename = "AlexNet"
-    torch.save(model,(filename + '.pth'))"""
-    loaded_model = torch.load('LeNetV1.pth')
+    filename = "AlexNetV3"
+    torch.save(model,(filename + '.pth'))
+    """loaded_model = torch.load('LeNetV1.pth')
     loaded_model.eval()
 
     for param in loaded_model.parameters():

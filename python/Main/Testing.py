@@ -120,7 +120,7 @@ class TestResults(QWidget):
         self.setLayout(Mainhbox)
         self.newImageButton.clicked.connect(self.startTest)
         self.backButton.clicked.connect(self.back)
-        self.setWindowTitle('QTextBrowser')
+        self.setWindowTitle('Image Predictions')
         self.setGeometry(300, 300, 800, 550)
         #self.show()
 

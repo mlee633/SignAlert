@@ -91,7 +91,7 @@ class trainWindow(QWidget):
         ## Creating the epoch spinbox
         self.epochBox = QSpinBox()
         self.epochBox.setRange(5,30)
-        epochLabel = QLabel("Number of epochs (5 - 20 range)")
+        epochLabel = QLabel("Number of epochs: (5 - 30 Range)")
         epochHbox = QHBoxLayout()
         epochHbox.addWidget(epochLabel)
         epochHbox.addWidget(self.epochBox)
@@ -108,7 +108,7 @@ class trainWindow(QWidget):
         batchHbox.addStretch(1)
         
         ## Creating the learning_rate Spinbox (specified as double so we can use floats)
-        learnLabel = QLabel("Learning Rate: (0.001 - 0.1 range)")
+        learnLabel = QLabel("Learning Rate: (0.001 - 0.1 Range)")
         self.learnBox = QDoubleSpinBox()
         self.learnBox.setRange(0.001,0.1)
         self.learnBox.setSingleStep(0.001)
@@ -130,7 +130,7 @@ class trainWindow(QWidget):
 
     def createStartTraining(self):
         
-        groupbox = QGroupBox('Train and view dataset')
+        groupbox = QGroupBox('Train And View Dataset')
         
 
         # Start training button, along with a LineEdit for the user to type in a custom .pth file name

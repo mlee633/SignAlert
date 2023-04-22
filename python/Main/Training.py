@@ -34,7 +34,7 @@ class Test_Train:
         self.progressBar = MyApp() #PBar()
 
     #num_split in percentage. 
-    def setting_up(self, file_location_train, num_split):
+    def setting_up(self, file_location_train, num_split, AlexNet):
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
         split = num_split/100
@@ -42,10 +42,19 @@ class Test_Train:
 
         train_dataset = xy[:(int(split*xy.shape[0])), :]
         valid_dataset = xy[(int(split*xy.shape[0])):, :]
-        train_dataset = userData(train_dataset, transform = transforms.Compose([transforms.ToTensor(), transforms.RandomRotation(30),
+
+        if AlexNet == True:
+            train_dataset = userData(train_dataset, transform=transforms.Compose([transforms.ToTensor(), transforms.RandomRotation(30),
+                                                        transforms.Resize((224,224)),
+                                                        transforms.Normalize(mean = (0.4914,), std = (0.2023,))]))
+            valid_dataset = userData(valid_dataset, transform=transforms.Compose([transforms.ToTensor(),
+                                                        transforms.Resize((224,224)),
+                                                        transforms.Normalize(mean = (0.4914,), std = (0.2023,))]))
+        else:
+            train_dataset = userData(train_dataset, transform = transforms.Compose([transforms.ToTensor(), transforms.RandomRotation(30),
                                                             transforms.Resize((32,32)),
                                                             transforms.Normalize(mean = (0.1306,), std = (0.3082))]))
-        valid_dataset = userData(valid_dataset, transform = transforms.Compose([transforms.ToTensor(),
+            valid_dataset = userData(valid_dataset, transform = transforms.Compose([transforms.ToTensor(),
                                                             transforms.Resize((32,32)),
                                                             transforms.Normalize(mean = (0.1306,), std = (0.3082))]))
 

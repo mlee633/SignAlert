@@ -10,7 +10,8 @@ from PyQt5.QtWidgets import*
 from PyQt5.QtGui import*
 from PyQt5.QtCore import*
 
-def testModel(model,image):
+#Model is a loaded saved model file. 
+def testModel(model,image, useAlexNet):
     model.eval()
     input_image = cv2.imread(image)
    
@@ -18,11 +19,17 @@ def testModel(model,image):
     #input_image_gray.resize(32,32)
     cv2.imwrite('image.png',input_image_gray)
     #print(input_image_gray)
-    processingImg = transforms.Compose([
-    transforms.ToPILImage(), transforms.Grayscale(1),           
-    transforms.Resize((32,32)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean = (0.1306,), std = (0.3082,))])
+    #------Need to add a specific transform parameters for AlexNet----------
+    if useAlexNet == True:
+        processingImg = transforms.Compose([transforms.ToPILImage(), transforms.Grayscale(1), 
+                                        transforms.Resize((224,224)),
+                                        transforms.ToTensor(),
+                                        transforms.Normalize(mean = (0.4914,), std = (0.2023,))])
+    else:
+        processingImg = transforms.Compose([transforms.ToPILImage(), transforms.Grayscale(1), 
+                                        transforms.Resize((32,32)),
+                                        transforms.ToTensor(),
+                                        transforms.Normalize(mean = (0.1306,), std = (0.3082,))])
     input_tensor = processingImg(input_image_gray)
     
     input_batch = input_tensor.unsqueeze(0)
@@ -50,11 +57,12 @@ def testModel(model,image):
     
 class TestResults(QWidget):
 
-    def __init__(self,model,images):
+    def __init__(self,model,images, useAlexNet):
         super().__init__()
         self.images = images
         self.model = model
         self.imageIndex = 0
+        self.useAlexNet = useAlexNet #Boolean 
         self.initUI()
         self.startTest()
 
@@ -63,7 +71,8 @@ class TestResults(QWidget):
         image = self.images[self.imageIndex]
         high_res = QSize(320,320)
         self.currentImage.setPixmap(QPixmap(image).scaled(high_res))
-        probs, guess = testModel(model=self.model,image=image)
+        #Passes a boolean to differentiate whether it is AlexNet operation or not
+        probs, guess = testModel(model=self.model,image=image, useAlexNet= self.useAlexNet)
         probs = probs.squeeze().tolist()
         for i,val in enumerate(probs):
 

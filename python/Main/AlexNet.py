@@ -111,7 +111,7 @@ class AlexNet(nn.Module):
     def __init__(self, num_classes):
         super().__init__()
         self.layer1 = nn.Sequential(
-            nn.Conv2d(1, 96, kernel_size=11, stride=4, padding=2),
+            nn.Conv2d(1, 96, kernel_size=11, stride=4, padding=0),
             nn.BatchNorm2d(96),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=3, stride=2))
@@ -132,14 +132,17 @@ class AlexNet(nn.Module):
             nn.Conv2d(384, 256, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(256),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=3, stride=2, padding=1))
-        self.fc1 = nn.Linear(256 * 6 * 6, 4096)
-        self.relu1 = nn.ReLU()
-        self.dropout1 = nn.Dropout(p=0.5)
-        self.fc2 = nn.Linear(4096, 4096)
-        self.relu2 = nn.ReLU()
-        self.dropout2 = nn.Dropout(p=0.5)
-        self.fc3 = nn.Linear(4096, num_classes)
+            nn.MaxPool2d(kernel_size=3, stride=2))
+        self.fc = nn.Sequential(
+            nn.Dropout(0.5),
+            nn.Linear(6400, 4096),
+            nn.ReLU())
+        self.fc1 = nn.Sequential(
+            nn.Dropout(0.5),
+            nn.Linear(4096, 4096),
+            nn.ReLU())
+        self.fc2 = nn.Sequential(
+            nn.Linear(4096, num_classes))
         
     def forward(self, x):
         out = self.layer1(x)
@@ -148,13 +151,9 @@ class AlexNet(nn.Module):
         out = self.layer4(out)
         out = self.layer5(out)
         out = out.reshape(out.size(0), -1)
+        out = self.fc(out)
         out = self.fc1(out)
-        out = self.relu1(out)
-        out = self.dropout1(out)
         out = self.fc2(out)
-        out = self.relu2(out)
-        out = self.dropout2(out)
-        out = self.fc3(out)
         return out
 # num_classes = 10
 # num_epochs = 20

@@ -61,7 +61,10 @@ class TestingModelGUI(QMainWindow):
         self.tab_widget = None
     def openTesting(self):
         model = torch.load(str(self.nameFile))
-        self.test = Testing.TestResults(model=model, images=self.images)
+        if model.__class__.__name__ == "AlexNet":
+            self.test = Testing.TestResults(model=model, images=self.images, useAlexNet=True)
+        else:
+            self.test = Testing.TestResults(model=model, images=self.images, useAlexNet=False)
         self.test.show()
     # def show_model_options(self):
     #     # Create a new tab widget

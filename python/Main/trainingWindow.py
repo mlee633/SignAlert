@@ -206,8 +206,9 @@ class trainWindow(QWidget):
             self.modelName = 'model1'
 
         # The training process (Could potentially have been put into a function itself)
+        #Setting up has an parameter for AlexNet since it has different image set up requirements
         self.train = Training.Test_Train(batch_size=self.batchBox.value(),learning_rate=self.learnBox.value(),num_epochs=self.epochBox.value(),num_classes=26)
-        self.device, self.train_dataset, self.valid_dataset = self.train.setting_up(file_location_train=self.nameFile, num_split=self.slider.value())
+        self.device, self.train_dataset, self.valid_dataset = self.train.setting_up(file_location_train=self.nameFile, num_split=self.slider.value(), AlexNet = self.AlexNetRadio.isChecked())
         self.train_load, self.valid_load = self.train.loading_up(self.train_dataset, self.valid_dataset)
         
         # Checking which model was checked

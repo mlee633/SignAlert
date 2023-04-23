@@ -61,53 +61,21 @@ class TestingModelGUI(QMainWindow):
         self.tab_widget = None
     def openTesting(self):
         model = torch.load(str(self.nameFile))
+        # Checking if AlexNet, if it is then we set useAlexNet to True, this is to make sure that we do the correct processing transformations.
         if model.__class__.__name__ == "AlexNet":
             self.test = Testing.TestResults(model=model, images=self.images, useAlexNet=True)
         else:
             self.test = Testing.TestResults(model=model, images=self.images, useAlexNet=False)
         self.test.show()
-    # def show_model_options(self):
-    #     # Create a new tab widget
-    #     self.tab_widget = QTabWidget()
-
-    #     # Create a tab for choosing the model file
-    #     file_tab = QWidget()
-    #     file_layout = QVBoxLayout()
-    #     file_label = QLabel("Choose model file:")
-    #     file_layout.addWidget(file_label)
-    #     file_button = QPushButton("Open", self)
-    #     file_button.clicked.connect(self.ModelbuttonClick)
-    #     file_layout.addWidget(file_button)
-    #     file_tab.setLayout(file_layout)
-    #     self.tab_widget.addTab(file_tab, "Model")
-
-        # Set the tab widget as the central widget
-        self.setCentralWidget(self.tab_widget)
-
+    
     def ModelbuttonClick(self):
         self.nameFile= QFileDialog.getOpenFileName(self,"Open training dataset",r"<Default dir>", "PTH (*.pth);;All Files (*)")[0]
-        print(self.nameFile)
-    # def show_image_options(self):
-    #     # Create a new tab widget
-    #     self.tab_widget = QTabWidget()
-
-    #     # Create a tab for choosing the image files
-    #     file_tab = QWidget()
-    #     file_layout = QVBoxLayout()
-    #     file_label = QLabel("Choose image files:")
-    #     file_layout.addWidget(file_label)
-    #     file_button = QPushButton("Open", self)
-    #     file_button.clicked.connect(self.ImagebuttonClick)
-    #     file_layout.addWidget(file_button)
-    #     file_tab.setLayout(file_layout)
-    #     self.tab_widget.addTab(file_tab, "Images")
-
-    #     # Set the tab widget as the central widget
-    #     self.setCentralWidget(self.tab_widget)
+       
+   
 
     def ImagebuttonClick(self):
         self.images= QFileDialog.getOpenFileNames(self,"Open Image Files",r"<Default dir>", "Images (*.png *.jpg *.jpeg *.bmp);;All Files (*)")[0]
-        print(self.images)
+       
 
     def open_camera_window(self):
         self.camera_window = MainWindow()

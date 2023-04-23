@@ -1,112 +1,12 @@
 # AlexNet - Deep Convolutional Neural Network
  
-import numpy as np
 import torch
 import torch.nn as nn
-from torchvision import datasets
-from torchvision import transforms
-from torch.utils.data.sampler import SubsetRandomSampler
-from userDataset import userData
+
  
 # Device configuration
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
- 
 
- 
-# def get_train_valid_loader(train_dataset,
-#                            batch_size,
-#                            augment,
-#                            random_seed,
-#                            valid_size = 0.1,
-#                            shuffle = True):
-#     normalize = transforms.Normalize(
-#         mean = [0.4914, 0.4822, 0.4465],
-#         std = [0.2023, 0.1994, 0.2010],
-#     )
- 
-#     """
-#     data transforms for pre-prcoessing the input 
-#     testing image before feeding into the net
-#     """
- 
-#     valid_transforms = transforms.Compose([
-#         transforms.Resize((227,227)), # resize the input to 227x227
-#         transforms.ToTensor(), # put the input to tensor format
-#         normalize,
-#         # normalise the input
-#         # the normmalisation is based on images from ImageNet
-#     ])
- 
-#     if augment:
-#         train_transform = transforms.Compose([
-#             transforms.RandomCrop(32, padding=4),
-#             transforms.RandomHorizontalFlip(),
-#             transforms.ToTensor(),
-#             normalize,
-#         ])
-#     else:
-#         train_transform = transforms.Compose([
-#             transforms.Resize((227,227)),
-#             transforms.ToTensor(),
-#             normalize,
-#         ])
- 
-#             # load the dataset
-#     train_dataset = userData(train_dataset, train_transform)
- 
-#     valid_dataset = userData(train_dataset, train_transform)
- 
-#     num_train = len(train_dataset)
-#     indices = list(range(num_train))
-#     split = int(np.floor(valid_size * num_train))
- 
-#     if shuffle:
-#         np.random.seed(random_seed)
-#         np.random.shuffle(indices)
- 
-#     train_idx, valid_idx = indices[split:], indices[:split]
-#     train_sampler = SubsetRandomSampler(train_idx)
-#     valid_sampler = SubsetRandomSampler(valid_idx)
- 
-#     train_loader = torch.utils.data.DataLoader(
-#         train_dataset, batch_size=batch_size, sampler=train_sampler)
- 
-#     valid_loader = torch.utils.data.DataLoader(
-#         valid_dataset, batch_size=batch_size, sampler=valid_sampler)
- 
-#     return (train_loader, valid_loader)
- 
-# def get_test_loader(data_dir,
-#                     batch_size,
-#                     shuffle=True):
-#     normalize = transforms.Normalize(
-#         mean=[0.485, 0.456, 0.406],
-#         std=[0.229, 0.224, 0.225],
-#     )
- 
-#     # define transform
-#     transform = transforms.Compose([
-#         transforms.Resize((227,227)),
-#         transforms.ToTensor(),
-#         normalize,
-#     ])
- 
-#     dataset = datasets.CIFAR10(
-#         root=data_dir, train=False,
-#         download=True, transform=transform,
-#     )
- 
-#     data_loader = torch.utils.data.DataLoader(
-#         dataset, batch_size=batch_size, shuffle=shuffle
-#     )
- 
-#     return data_loader
-
-
-# # MNIST dataset 
-# train_loader, valid_loader = get_train_valid_loader('C:\\Users\\healt\\OneDrive\\문서\\GitHub\\project-1-python-team_16\\dataset\\sign_mnist_train.csv', batch_size = 64, augment = False, random_seed = False)
- 
-# test_loader = get_test_loader('C:\\Users\\healt\\OneDrive\\문서\\GitHub\\project-1-python-team_16\\dataset\\sign_mnist_test.csv', batch_size = 64 )
 class AlexNet(nn.Module):
     def __init__(self, num_classes):
         super().__init__()
@@ -155,50 +55,3 @@ class AlexNet(nn.Module):
         out = self.fc1(out)
         out = self.fc2(out)
         return out
-# num_classes = 10
-# num_epochs = 20
-# batch_size = 64
-# learning_rate = 0.005
- 
-# model = AlexNet(num_classes).to(device)
- 
-# # Loss and optimizer
-# criterion = nn.CrossEntropyLoss()
-# optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, weight_decay = 0.005, momentum = 0.9)  
- 
-# # Train the model
-# total_step = len(train_loader)
- 
-# for epoch in range(num_epochs):
-#     for i, (images, labels) in enumerate(train_loader):  
-#         # Move tensors to the configured device
-#         labels = labels.T
-#         labels = np.ravel(labels)
-#         labels = torch.from_numpy(labels)
-#         images = images.to(device)
-#         labels = labels.to(device)
-
-#         outputs = model(images) 
-#         loss = criterion(outputs, labels)
-
-#         optimizer.zero_grad()
-#         loss.backward()
-#         optimizer.step()
- 
-#     print ('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}' 
-#                    .format(epoch+1, num_epochs, i+1, total_step, loss.item()))
- 
-#     # Validation
-#     with torch.no_grad():
-#         correct = 0
-#         total = 0
-#         for images, labels in valid_loader:
-#             images = images.to(device)
-#             labels = labels.to(device)
-#             outputs = model(images)
-#             _, predicted = torch.max(outputs.data, 1)
-#             total += labels.size(0)
-#             correct += (predicted == labels).sum().item()
-#             del images, labels, outputs
- 
-#         print('Accuracy of the network on the {} validation images: {} %'.format(5000, 100 * correct / total)) 

@@ -72,7 +72,7 @@ class MainMenu(QWidget):
         if color.isValid():
             self.setStyleSheet(f"background-color: {color.name()};")
 
-
+    
     def show_exit_popup(self):
         settings = QSettings('MyCompany', 'MyApp')
         if settings.value('confirm_exit', True, type=bool):

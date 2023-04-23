@@ -145,6 +145,7 @@ class trainWindow(QWidget):
         ## Creating the filter combobox, user can select between either All letters, or just one image shown
         self.cb = QComboBox(self)
         self.cb.addItem('All')
+        # Creating an item in the combobox for every letter except J and Z (can't be displayed in our ASL)
         for letter in string.ascii_uppercase:
             if (letter != 'J') and (letter != 'Z'):
                 self.cb.addItem(letter)
@@ -184,7 +185,7 @@ class trainWindow(QWidget):
                 self.datasetBrowser.append(letter + ': '+str(int(num)) + ' counts')
                 QApplication.processEvents()
             
-    
+    # When the slider changes value
     def sliderChange(self):
         self.sliderText.setText('Train/Validation ratio: ' + str(self.slider.value()) + '/' + str(100-self.slider.value()))
         self.sliderText.adjustSize()

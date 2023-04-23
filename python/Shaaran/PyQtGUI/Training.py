@@ -52,12 +52,11 @@ class Test_Train:
         optimizer = torch.optim.SGD(model.parameters(), lr = self.learning_rate, weight_decay = 0.005, momentum = 0.9)
 
         
-        #for param in model.parameters():
-            #print(param.size())
+     
         counter = 0
 
         for epoch in range(self.num_epochs):
-            for i, (images, labels) in enumerate(train_loader): #tqdm(enumerate(train_loader), total = len(train_loader), leave = False):
+            for i, (images, labels) in enumerate(train_loader): 
                 labels = labels.T
                 labels = np.ravel(labels)
                 labels = torch.from_numpy(labels)
@@ -90,7 +89,7 @@ class Test_Train:
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
 
-            print('Accuracy of the network on the {} train images: {} %'.format(27455, 100*correct/total)) 
+            
 
 
 if __name__ == '__main__':

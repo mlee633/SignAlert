@@ -16,10 +16,11 @@ def testModel(model,image, useAlexNet):
     input_image = cv2.imread(image)
    
     input_image_gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
-    #input_image_gray.resize(32,32)
+
     cv2.imwrite('image.png',input_image_gray)
-    #print(input_image_gray)
+    
     #------Need to add a specific transform parameters for AlexNet----------
+    # If its AlexNet the resize will be of a different size (224x224) in comparison to LeNet5 and BriaNet
     if useAlexNet == True:
         processingImg = transforms.Compose([transforms.ToPILImage(), transforms.Grayscale(1), 
                                         transforms.Resize((224,224)),
@@ -30,13 +31,12 @@ def testModel(model,image, useAlexNet):
                                         transforms.Resize((32,32)),
                                         transforms.ToTensor(),
                                         transforms.Normalize(mean = (0.1306,), std = (0.3082,))])
+    
     input_tensor = processingImg(input_image_gray)
     
     input_batch = input_tensor.unsqueeze(0)
-    t = transforms.ToPILImage()
-    im = t(input_image_gray)
-    im.save('return.png')
     
+
     if torch.cuda.is_available():
         input_batch = input_batch.to('cuda')
         model.to('cuda')
@@ -45,13 +45,11 @@ def testModel(model,image, useAlexNet):
         output = model(input_batch)
 
 
-    # print(output)
+  
     probabilities = torch.nn.functional.softmax(output, dim = 1)
 
     guess = np.argmax(probabilities)
-    # print(probabilities)
-    # probabilities = np.argmax(probabilities)
-    # print(probabilities)
+  
     return probabilities, guess
     
     
@@ -71,16 +69,19 @@ class TestResults(QWidget):
         image = self.images[self.imageIndex]
         high_res = QSize(320,320)
         self.currentImage.setPixmap(QPixmap(image).scaled(high_res))
+
         #Passes a boolean to differentiate whether it is AlexNet operation or not
         probs, guess = testModel(model=self.model,image=image, useAlexNet= self.useAlexNet)
         probs = probs.squeeze().tolist()
+        # For each letter, we write down the % prediction of it
         for i,val in enumerate(probs):
 
             self.tb.append(string.ascii_uppercase[i] + ': ' + str(round((val * 100),2)) + '% accuracy')
+        # Output our best guess (highest prediction value)
         self.tb.append('The best guess we have for this image is: '+ string.ascii_uppercase[(guess.tolist())])
         
         
-            
+        # Checking whether or not we are on the first or last image in the bunch (to enable/disable buttons)    
         if (self.imageIndex == 0):
             self.backButton.setEnabled(False)
         else:
@@ -92,21 +93,23 @@ class TestResults(QWidget):
             self.newImageButton.setEnabled(True)
                 
     def initUI(self):  
+        # Creating the two main groupboxes for the image and the predictions section
         imgGroupBox = QGroupBox('Image being tested')
         probabilityGroupBox = QGroupBox('Probabilities')
         self.currentImage = QLabel()
         self.tb = QTextBrowser()
         self.tb.setAcceptRichText(True)
         
-        
+        # Creating the vbox for the image section
         imageVbox = QVBoxLayout()
         imageVbox.addWidget(self.currentImage)
         imgGroupBox.setLayout(imageVbox)
         probVbox = QVBoxLayout()
         probVbox.addWidget(self.tb)
+        
+        # Creating the section for the predictions and the image maneuvering section 
         self.newImageButton = QPushButton('Next Image')
         self.backButton = QPushButton('Previous Image')
-        
         buttonHbox = QHBoxLayout()
         buttonHbox.addWidget(self.newImageButton)
         buttonHbox.addWidget(self.backButton)
@@ -125,6 +128,7 @@ class TestResults(QWidget):
         #self.show()
 
     def clear_text(self):
+        # Clearing the text
         self.tb.clear()
         
     def back(self): 

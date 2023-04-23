@@ -9,7 +9,7 @@ What the user must have:
 - Pillow (PIL)
 - CV2
 
-The MUST start the tool by opening up the MainMenuGUI.py file
+The MUST start the tool by opening up the MainMenuGUI.py file.
 The user should first have a dataset they wish to use installed on their computer.
 We recommend the Sign Language MNIST Dataset (https://www.kaggle.com/datasets/datamunge/sign-language-mnist).
 Once the user has a dataset they wish to train their model with, they can click on the Training button on the Main menu, which will lead them to the training window.

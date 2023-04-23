@@ -1,9 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QProgressBar, QVBoxLayout, QTextBrowser
 from PyQt5.QtCore import QThread, pyqtSignal
-import time
-#from tqdm import tqdm
-#from Testing import Test_Train
+
 
 class MyApp(QWidget):
 

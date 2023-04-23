@@ -15,7 +15,7 @@ class MyApp(QWidget):
         self.pbar.setGeometry(360, 400, 25, 25)
         
         #setting up the dimensions and action of button
-        stop_training_button = QPushButton('Stop')
+        stop_training_button = QPushButton('Close')
         stop_training_button.setGeometry(550, 450, 20, 20)
         stop_training_button.clicked.connect(self.button_clicked) #connects (i think like a signal) to tell that method within the parameter to be executed
 

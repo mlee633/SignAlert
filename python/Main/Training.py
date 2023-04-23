@@ -112,11 +112,11 @@ class Test_Train:
                     total += labels.size(0)
                     correct += (predicted == labels).sum().item()
                     avg_vloss = running_vloss / (i + 1)
-                    print("LOSS train {} valid {}".format(avg_loss, avg_vloss))
+                    #print("LOSS train {} valid {}".format(avg_loss, avg_vloss))
 
             #Displays this onto the textbox that is located above the progress bar. Also seems like number of train images are len(train_loader)
             self.progressBar.tb.append('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, self.num_epochs, loss.item()))
-            self.progressBar.tb.append('Accuracy of the network on the {} test images: {:.2f} % \n'.format(length(valid_loader), 100*correct/total))
+            self.progressBar.tb.append('Accuracy of the network on the {} test images: {:.2f} % \n'.format(len(valid_loader), 100*correct/total))
         return model
           
 #For testing purposes when running on this file

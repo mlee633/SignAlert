@@ -1,6 +1,7 @@
-# project-1-python-team_16
+# ---SignAlert---
 
---- SIGN ALERT ---
+Made by group 16.
+
 Sign Alert is a tool used to help hard of hearing individuals communicate with individuals who do not understand American Sign Language (ASL).
 What the user must have:
 - PyQT5
@@ -23,4 +24,11 @@ Once they have trained their model, they can then do and test the saved model by
 
 Once they pick which images they would like to test, they can click the Test Images button and a screen will pop up, showing the current image and the predictions on what letter that image contains.
 
+Contributors:
+
+Brian Wei: Developing backend AI of Sign Alert, as well as a bit of frontend (Progress bars etc.) Made BriaNet and parts of AlexNet
+
+Isaac Lee: Developing mostly frontend and parts of backend AI, created the camera module. Made AlexNet with help from Brian
+
+Shaaran Elango: Devloping front end design, worked on some backend. Made LeNet5
 Current version is version 1.0

@@ -1,6 +1,6 @@
 
 from torch.utils.data import Dataset, DataLoader
-import numpy as np
+import numpy
 from PIL import Image
 import math
 
@@ -11,15 +11,14 @@ class userData(Dataset):
         self.y = (numpy_array[:,[0]]) 
         self.n_samples = numpy_array.shape[0]
         self.transform = transform
+    # Getting each item in the dataset
     def __getitem__(self,index):
-        #first_image = self.x[index].reshape((28, 28))
-        #im = Image.fromarray(first_image)
-        #im = im.convert("L")
         image = self.x[index].reshape((28,28))
         if self.transform:
             return  self.transform(image), self.y[index]
         return image, self.y[index]
-        
+    
+    # Returning length of the dataset
     def __len__(self):
         return self.n_samples
 
@@ -38,7 +37,7 @@ if __name__ == '__main__':
        
     # im.save("testeddd.jpeg")
 
-## All of below is testing shit
+## All of below is testing
 # training loop
     num_epochs = 2
     total_samples = len(dataset)

@@ -12,9 +12,7 @@ class TestingModelGUI(QMainWindow):
         super().__init__()
         # Title and Icon
         self.initUI()
-        self.Back_button = QPushButton("Back")
-        self.Back_button.clicked.connect(self.back_to_main) 
-        self.statusBar().addWidget(self.Back_button)
+       
         self.Exit_button = QPushButton("Exit")
         self.Exit_button.clicked.connect(self.exit_application)
         self.statusBar().addPermanentWidget(self.Exit_button)
@@ -81,12 +79,7 @@ class TestingModelGUI(QMainWindow):
         self.camera_window = MainWindow()
         self.camera_window.show()
 
-    def back_to_main(self):
-        # Switch back to the main widget
-        self.setCentralWidget(QWidget(self))
 
-        self.tab_widget = None
-        self.initUI()
 
     def exit_application(self):
         self.close()

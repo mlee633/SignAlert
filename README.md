@@ -31,4 +31,5 @@ Brian Wei: Developing backend AI of Sign Alert, as well as a bit of frontend (Pr
 Isaac Lee: Developing mostly frontend and parts of backend AI, created the camera module. Made AlexNet with help from Brian
 
 Shaaran Elango: Devloping front end design, worked on some backend. Made LeNet5
+
 Current version is version 1.0

@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLay
 import os
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-
+## The camera thread, this is essentially the 'camera', using a QThread
 class CameraThread(QThread):
     change_pixmap_signal = pyqtSignal(QImage)
 
@@ -43,10 +43,12 @@ class MainWindow(QWidget):
         self.setWindowIcon(QIcon(dir_path+'/signalertlogo.png'))
 
     def init_ui(self):
+
         self.webcam_label = QLabel(self)
         self.webcam_label.setAlignment(Qt.AlignCenter)
         self.webcam_label.setMinimumSize(640, 480)
 
+        # Creating push buttons for the camera (camera on, off and taking a photo)
         self.camera_button_on = QPushButton('Camera On', self)
         self.camera_button_on.clicked.connect(self.on_camera_button_on_clicked)
 
@@ -71,6 +73,7 @@ class MainWindow(QWidget):
         self.camera_thread = CameraThread()
         self.camera_thread.change_pixmap_signal.connect(self.update_image)
 
+    ## When the camera is turned on, we enable and disable some buttons, then start the camera thread
     def on_camera_button_on_clicked(self):
         self.camera_button_on.setEnabled(False)
         self.camera_button_off.setEnabled(True)
@@ -78,7 +81,7 @@ class MainWindow(QWidget):
         self.camera_thread._run_flag = True
         self.webcam_label.setText("Loading Webcam...")
         self.camera_thread.start()
-
+    ## When the camera is turned off, we close all the screens
     def on_camera_button_off_clicked(self):
         self.camera_button_off.setEnabled(False)
         self.camera_button_on.setEnabled(True)

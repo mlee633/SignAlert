@@ -1,8 +1,12 @@
-# ---SignAlert---
+# ---Sign Alert---
 
-Made by group 16.
+Made by group 16 for COMPSYS302 Project 1
 
-Sign Alert is a tool used to help hard of hearing individuals communicate with individuals who do not understand American Sign Language (ASL).
+
+Sign Alert is a tool used to assist hard of hearing individuals communicate with individuals who do not understand American Sign Language (ASL). 
+Our tool is aiming to help raise awareness and promote sign language to the world, as we believe that not enough people in the world understand sign language. The tool provides a way to train models for predicting ASL signs as well as a tool to interpret signs and returns the letter the sign represents.
+
+## Installation
 What the user must have:
 - PyQT5
 - numpy
@@ -12,6 +16,7 @@ What the user must have:
 
 The user MUST start the tool by opening up the MainMenuGUI.py file.
 
+## Usage / Instructions
 The user should first have a dataset they wish to use installed on their computer.
 We recommend the Sign Language MNIST Dataset (https://www.kaggle.com/datasets/datamunge/sign-language-mnist).
 
@@ -24,7 +29,11 @@ Once they have trained their model, they can then do and test the saved model by
 
 Once they pick which images they would like to test, they can click the Test Images button and a screen will pop up, showing the current image and the predictions on what letter that image contains.
 
-Contributors:
+## Version Number
+
+Current version is Sign Alert v1.1
+
+## Contributors:
 
 Brian Wei: Developing backend AI of Sign Alert, as well as a bit of frontend (Progress bars etc.) Made BriaNet and parts of AlexNet
 
@@ -32,4 +41,3 @@ Isaac Lee: Developing mostly frontend and parts of backend AI, created the camer
 
 Shaaran Elango: Devloping front end design, worked on some backend. Made LeNet5
 
-Current version is version 1.0

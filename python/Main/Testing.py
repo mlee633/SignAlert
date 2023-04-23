@@ -17,6 +17,7 @@ def testModel(model,image, useAlexNet):
    
     input_image_gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
 
+    # Reference for the user, in case they would like to see how their image looks when turned to grayscale (in case the prediction was false)
     cv2.imwrite('image.png',input_image_gray)
     
     #------Need to add a specific transform parameters for AlexNet----------

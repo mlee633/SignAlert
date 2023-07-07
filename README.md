@@ -3,7 +3,7 @@
 Made by group 16 for COMPSYS302 Project 1
 
 
-Sign Alert is a tool used to assist hard of hearing individuals communicate with individuals who do not understand American Sign Language (ASL). 
+Sign Alert made during a unviersity course, is a tool used to assist hard of hearing individuals to communicate with individuals who do not understand American Sign Language (ASL). 
 Our tool is aiming to help raise awareness and promote sign language to the world, as we believe that not enough people in the world understand sign language. The tool provides a way to train models for predicting ASL signs as well as a tool to interpret signs and returns the letter the sign represents.
 
 ## Installation
